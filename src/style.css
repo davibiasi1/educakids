@@ -353,3 +353,17 @@ body{
   .gridVideos{ grid-template-columns: 1fr; }
   .videoThumb__placeholder{ height: 210px; }
 }
+
+.logout-btn {
+  padding: 10px 16px;
+  background-color: #ff7f50;
+  color: white;
+  text-decoration: "Sair";
+  border-radius: 8px;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.logout-btn:hover {
+  opacity: 0.9;
+}

@@ -29,6 +29,8 @@ export function renderLayout() {
             <span class="chip__value" id="trophyValue">12</span>
           </div>
 
+          <a class="logout-btn" href="#/login">Sair</a>
+
           <button class="avatar" aria-label="Perfil">
             <span class="avatar__icon">☺</span>
           </button>

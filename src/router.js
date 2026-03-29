@@ -2,12 +2,16 @@ import { HomePage } from "./pages/home.js";
 import { VideosPage } from "./pages/videos.js";
 import { RecompensasPage } from "./pages/recompensas.js";
 import { ProgressoPage } from "./pages/progresso.js";
+import { LoginPage } from "./pages/login.js";
+import { CadastroPage } from "./pages/cadastro.js";
 
 const routes = {
   "/home": HomePage,
   "/videos": VideosPage,
   "/recompensas": RecompensasPage,
   "/progresso": ProgressoPage,
+  "/login": LoginPage,
+  "/cadastro": CadastroPage,
 };
 
 function getRoute() {
