@@ -1,4 +1,82 @@
+import { api, auth } from '../services/api.js';
+
 export function CadastroPage() {
+  // Registrar event listener após a renderização
+  requestAnimationFrame(() => {
+    const form = document.getElementById('cadastro-form');
+    if (!form) return;
+
+    // Adicionar onsubmit diretamente também
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const errorDiv = document.getElementById('error-message');
+      const submitBtn = document.getElementById('submit-btn');
+      
+      const nome = document.getElementById('nome').value;
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+      const confirmarSenha = document.getElementById('confirmarSenha').value;
+
+      // Função para mostrar erro
+      const showError = (message) => {
+        if (errorDiv) {
+          errorDiv.textContent = message;
+          errorDiv.style.display = 'block';
+        }
+      };
+
+      // Limpar mensagem de erro
+      if (errorDiv) {
+        errorDiv.textContent = '';
+        errorDiv.style.display = 'none';
+      }
+
+      // Validação básica
+      if (!nome || !email || !senha || !confirmarSenha) {
+        showError('Preencha todos os campos');
+        return false;
+      }
+
+      if (senha !== confirmarSenha) {
+        showError('As senhas não coincidem');
+        return false;
+      }
+
+      if (senha.length < 6) {
+        showError('A senha deve ter no mínimo 6 caracteres');
+        return false;
+      }
+
+      // Desabilitar botão durante o carregamento
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Cadastrando...';
+      }
+
+      try {
+        const response = await api.register(nome, email, senha);
+        
+        // Salvar token e usuário
+        auth.saveToken(response.token);
+        auth.saveUser(response.user);
+
+        // Redirecionar para home
+        window.location.hash = '#/';
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Cadastrar';
+        }
+      }
+
+      return false;
+    };
+  });
+
   return `
     <section
       style="
@@ -27,7 +105,21 @@ export function CadastroPage() {
           Cadastre o responsável para acessar o EducaKids
         </p>
 
-        <form id="cadastro-form" style="display: grid; gap: 16px;">
+        <div 
+          id="error-message" 
+          style="
+            display: none;
+            padding: 12px;
+            margin-bottom: 16px;
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            border-radius: 8px;
+            color: #dc2626;
+            font-size: 14px;
+          "
+        ></div>
+
+        <form id="cadastro-form" action="javascript:void(0);" method="post" style="display: grid; gap: 16px;">
           <div>
             <label
               for="nome"
@@ -37,9 +129,10 @@ export function CadastroPage() {
             </label>
             <input
               id="nome"
-              name="nome"
               type="text"
               placeholder="Digite seu nome"
+              required
+              autocomplete="name"
               style="
                 width: 100%;
                 padding: 12px;
@@ -60,9 +153,10 @@ export function CadastroPage() {
             </label>
             <input
               id="email"
-              name="email"
               type="email"
               placeholder="Digite seu e-mail"
+              required
+              autocomplete="email"
               style="
                 width: 100%;
                 padding: 12px;
@@ -83,9 +177,10 @@ export function CadastroPage() {
             </label>
             <input
               id="senha"
-              name="senha"
               type="password"
               placeholder="Crie uma senha"
+              required
+              autocomplete="new-password"
               style="
                 width: 100%;
                 padding: 12px;
@@ -106,9 +201,10 @@ export function CadastroPage() {
             </label>
             <input
               id="confirmarSenha"
-              name="confirmarSenha"
               type="password"
               placeholder="Repita a senha"
+              required
+              autocomplete="new-password"
               style="
                 width: 100%;
                 padding: 12px;
@@ -121,6 +217,7 @@ export function CadastroPage() {
           </div>
 
           <button
+            id="submit-btn"
             type="submit"
             style="
               padding: 12px;
@@ -137,7 +234,7 @@ export function CadastroPage() {
 
           <p style="text-align: center; margin: 0;">
             Já tem conta?
-            <a href="#/login">Entrar</a>
+            <a href="#/login" style="color: #4f46e5; text-decoration: none; font-weight: 500;">Entrar</a>
           </p>
         </form>
       </div>

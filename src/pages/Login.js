@@ -1,4 +1,70 @@
+import { api, auth } from '../services/api.js';
+
 export function LoginPage() {
+  // Registrar event listener após a renderização
+  requestAnimationFrame(() => {
+    const form = document.getElementById('login-form');
+    if (!form) return;
+
+    // Adicionar onsubmit diretamente também
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const errorDiv = document.getElementById('error-message');
+      const submitBtn = document.getElementById('submit-btn');
+      
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+
+      // Função para mostrar erro
+      const showError = (message) => {
+        if (errorDiv) {
+          errorDiv.textContent = message;
+          errorDiv.style.display = 'block';
+        }
+      };
+
+      // Limpar mensagem de erro
+      if (errorDiv) {
+        errorDiv.textContent = '';
+        errorDiv.style.display = 'none';
+      }
+
+      // Validação básica
+      if (!email || !senha) {
+        showError('Preencha todos os campos');
+        return false;
+      }
+
+      // Desabilitar botão durante o carregamento
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Entrando...';
+      }
+
+      try {
+        const response = await api.login(email, senha);
+        
+        // Salvar token e usuário
+        auth.saveToken(response.token);
+        auth.saveUser(response.user);
+
+        // Redirecionar para home
+        window.location.hash = '#/';
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Entrar';
+        }
+      }
+
+      return false;
+    };
+  });
+
   return `
     <section
       style="
@@ -27,7 +93,21 @@ export function LoginPage() {
           Acesse sua conta no EducaKids
         </p>
 
-        <form id="login-form" style="display: grid; gap: 16px;">
+        <div 
+          id="error-message" 
+          style="
+            display: none;
+            padding: 12px;
+            margin-bottom: 16px;
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            border-radius: 8px;
+            color: #dc2626;
+            font-size: 14px;
+          "
+        ></div>
+
+        <form id="login-form" action="javascript:void(0);" method="post" style="display: grid; gap: 16px;">
           <div>
             <label
               for="email"
@@ -37,9 +117,10 @@ export function LoginPage() {
             </label>
             <input
               id="email"
-              name="email"
               type="email"
               placeholder="Digite seu e-mail"
+              required
+              autocomplete="email"
               style="
                 width: 100%;
                 padding: 12px;
@@ -60,9 +141,10 @@ export function LoginPage() {
             </label>
             <input
               id="senha"
-              name="senha"
               type="password"
               placeholder="Digite sua senha"
+              required
+              autocomplete="current-password"
               style="
                 width: 100%;
                 padding: 12px;
@@ -75,6 +157,7 @@ export function LoginPage() {
           </div>
 
           <button
+            id="submit-btn"
             type="submit"
             style="
               padding: 12px;
@@ -91,7 +174,7 @@ export function LoginPage() {
 
           <p style="text-align: center; margin: 0;">
             Ainda não tem conta?
-            <a href="#/cadastro">Cadastre-se</a>
+            <a href="#/cadastro" style="color: #4f46e5; text-decoration: none; font-weight: 500;">Cadastre-se</a>
           </p>
         </form>
       </div>
