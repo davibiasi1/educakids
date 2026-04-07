@@ -50,7 +50,7 @@ export function LoginPage() {
         auth.saveToken(response.token);
         auth.saveUser(response.user);
 
-        // Redirecionar para home
+        // Redirecionar para home (o router atualizará o layout automaticamente)
         window.location.hash = '#/';
       } catch (error) {
         showError(error.message);

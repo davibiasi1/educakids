@@ -4,6 +4,7 @@ import { RecompensasPage } from "./pages/recompensas.js";
 import { ProgressoPage } from "./pages/progresso.js";
 import { LoginPage } from "./pages/login.js";
 import { CadastroPage } from "./pages/cadastro.js";
+import { updateLayout } from "./components/layout.js";
 
 const routes = {
   "/home": HomePage,
@@ -27,6 +28,9 @@ function render() {
 
   const page = routes[path] || HomePage;
   view.innerHTML = page(params);
+  
+  // Atualizar layout sempre que mudar de página
+  updateLayout();
 }
 
 export function initRouter() {
