@@ -44,7 +44,7 @@ export function CadastroPage() {
         return false;
       }
 
-      if (senha.length < 6) {
+      if (senha.length < 8) {
         showError('A senha deve ter no mínimo 6 caracteres');
         return false;
       }
