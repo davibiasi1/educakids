@@ -7,17 +7,32 @@ function setupLogoutButton() {
       logoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
         auth.logout();
-        // Redirecionar para login (o router atualizará o layout automaticamente)
         window.location.hash = '#/login';
       });
     }
   }, 0);
 }
 
+function getCurrentPath() {
+  return window.location.hash.replace('#', '').split('?')[0] || '/home';
+}
+
+function getNavLinks() {
+  const currentPath = getCurrentPath();
+
+  return `
+    <a class="navlink ${currentPath === '/home' ? 'navlink--active' : ''}" href="#/home">Início</a>
+    <a class="navlink ${currentPath === '/videos' ? 'navlink--active' : ''}" href="#/videos">Vídeos</a>
+    <a class="navlink ${currentPath === '/recompensas' ? 'navlink--active' : ''}" href="#/recompensas">Recompensas</a>
+    <a class="navlink ${currentPath === '/progresso' ? 'navlink--active' : ''}" href="#/progresso">Progresso</a>
+    <a class="navlink ${currentPath === '/sobre' ? 'navlink--active' : ''}" href="#/sobre">Sobre</a>
+  `;
+}
+
 export function renderLayout() {
   const isLoggedIn = auth.isAuthenticated();
   const user = auth.getUser();
-  
+
   setupLogoutButton();
 
   return `
@@ -33,10 +48,7 @@ export function renderLayout() {
         </div>
 
         <nav class="topbar__nav">
-          <a class="navlink" href="#/home">Início</a>
-          <a class="navlink" href="#/videos">Vídeos</a>
-          <a class="navlink" href="#/recompensas">Recompensas</a>
-          <a class="navlink" href="#/progresso">Progresso</a>
+          ${getNavLinks()}
         </nav>
 
         <div class="topbar__right">
@@ -50,7 +62,7 @@ export function renderLayout() {
             <span class="chip__value" id="trophyValue">12</span>
           </div>
 
-          ${isLoggedIn 
+          ${isLoggedIn
             ? `<a class="logout-btn" href="#" id="logout-btn">Sair</a>`
             : `<a class="logout-btn" href="#/login">Login</a>`
           }
@@ -66,7 +78,6 @@ export function renderLayout() {
   `;
 }
 
-// Função para atualizar apenas o header dinamicamente
 export function updateLayout() {
   const topbar = document.getElementById('topbar');
   if (!topbar) return;
@@ -85,10 +96,7 @@ export function updateLayout() {
     </div>
 
     <nav class="topbar__nav">
-      <a class="navlink" href="#/home">Início</a>
-      <a class="navlink" href="#/videos">Vídeos</a>
-      <a class="navlink" href="#/recompensas">Recompensas</a>
-      <a class="navlink" href="#/progresso">Progresso</a>
+      ${getNavLinks()}
     </nav>
 
     <div class="topbar__right">
@@ -102,7 +110,7 @@ export function updateLayout() {
         <span class="chip__value" id="trophyValue">12</span>
       </div>
 
-      ${isLoggedIn 
+      ${isLoggedIn
         ? `<a class="logout-btn" href="#" id="logout-btn">Sair</a>`
         : `<a class="logout-btn" href="#/login">Login</a>`
       }

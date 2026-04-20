@@ -358,7 +358,7 @@ body{
   padding: 10px 16px;
   background-color: #ff7f50;
   color: white;
-  text-decoration: "Sair";
+  text-decoration: none;
   border-radius: 8px;
   font-weight: bold;
   transition: 0.2s;
@@ -366,4 +366,296 @@ body{
 
 .logout-btn:hover {
   opacity: 0.9;
+}
+
+/* =========================
+   SOBRE
+========================= */
+
+.sobre-page{
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(47,212,200,.10), transparent 28%),
+    radial-gradient(circle at top right, rgba(255,138,91,.10), transparent 24%),
+    linear-gradient(180deg, #f4fcfb 0%, #fbfaf7 100%);
+  padding: 8px 0 30px;
+}
+
+.sobre-wrapper{
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.sobre-hero{
+  background: linear-gradient(135deg, #eefbfb 0%, #f9fbff 100%);
+  border-radius: 28px;
+  padding: 48px 30px 40px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.sobre-hero::before{
+  content:"";
+  position:absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(47,212,200,.12);
+  top: -70px;
+  left: -40px;
+}
+
+.sobre-hero::after{
+  content:"";
+  position:absolute;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: rgba(255,138,91,.10);
+  bottom: -80px;
+  right: -60px;
+}
+
+.sobre-hero__content{
+  position: relative;
+  z-index: 1;
+}
+
+.sobre-title{
+  margin: 0 0 14px;
+  font-size: 58px;
+  line-height: 1.05;
+  letter-spacing: -.8px;
+  font-weight: 1000;
+  color: var(--mint);
+}
+
+.sobre-subtitle{
+  margin: 0 auto;
+  max-width: 980px;
+  font-size: 18px;
+  line-height: 1.8;
+  color: #3e434b;
+  font-weight: 500;
+}
+
+.sobre-section{
+  margin-bottom: 28px;
+}
+
+.sobre-section__title{
+  margin: 0 0 18px;
+  font-size: 28px;
+  font-weight: 1000;
+  color: #111;
+}
+
+.sobre-cards{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.sobre-card{
+  background: var(--card);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  padding: 14px;
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+
+.sobre-card:hover{
+  transform: translateY(-6px);
+  box-shadow: 0 18px 36px rgba(25,25,40,.12);
+}
+
+.sobre-card__image{
+  height: 180px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #dff8f7 0%, #edf9fb 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  margin-bottom: 14px;
+}
+
+.sobre-card__image img{
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.sobre-card__content{
+  padding: 4px 8px 2px;
+}
+
+.sobre-card__content h3{
+  margin: 0 0 8px;
+  font-size: 21px;
+  font-weight: 1000;
+  color: #111;
+}
+
+.sobre-card__content p{
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: #474d57;
+}
+
+.sobre-missao{
+  margin: 30px 0 28px;
+  background: linear-gradient(90deg, #49d0cc 0%, #f58c57 100%);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  padding: 28px 26px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 20px;
+}
+
+.sobre-missao__text h2{
+  margin: 0 0 10px;
+  font-size: 30px;
+  color: #fff;
+  font-weight: 1000;
+}
+
+.sobre-missao__text p{
+  margin: 0;
+  color: rgba(255,255,255,.95);
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 760px;
+}
+
+.sobre-missao__icon{
+  min-width: 100px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.sobre-missao__icon span{
+  font-size: 54px;
+  filter: drop-shadow(0 8px 12px rgba(0,0,0,.15));
+}
+
+.sobre-extra__box{
+  background: rgba(255,255,255,.88);
+  border: 1px solid rgba(47,212,200,.14);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.sobre-extra__box h2{
+  margin: 0 0 12px;
+  font-size: 26px;
+  color: #1f2228;
+  font-weight: 1000;
+}
+
+.sobre-extra__box p{
+  margin: 0 0 12px;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #4a505a;
+}
+
+.sobre-extra__box p:last-child{
+  margin-bottom: 0;
+}
+
+/* link ativo do menu */
+.navlink--active{
+  color: var(--mint);
+  position: relative;
+}
+
+.navlink--active::after{
+  content:"";
+  position:absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -8px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--mint);
+}
+
+/* RESPONSIVO SOBRE */
+@media (max-width: 1024px){
+  .sobre-title{
+    font-size: 46px;
+  }
+
+  .sobre-cards{
+    grid-template-columns: 1fr;
+  }
+
+  .sobre-missao{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sobre-missao__icon{
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 900px){
+  .sobre-page{
+    padding-top: 0;
+  }
+
+  .sobre-hero{
+    padding: 34px 20px 30px;
+    border-radius: 22px;
+  }
+
+  .sobre-title{
+    font-size: 36px;
+  }
+
+  .sobre-subtitle{
+    font-size: 16px;
+  }
+
+  .sobre-section__title{
+    font-size: 24px;
+  }
+
+  .sobre-card__image{
+    height: 160px;
+  }
+
+  .sobre-card__image img{
+    width: 96px;
+    height: 96px;
+  }
+
+  .sobre-card__content h3{
+    font-size: 20px;
+  }
+
+  .sobre-card__content p,
+  .sobre-extra__box p,
+  .sobre-missao__text p{
+    font-size: 15px;
+  }
+
+  .sobre-missao__text h2{
+    font-size: 26px;
+  }
+
+  .sobre-missao__icon span{
+    font-size: 44px;
+  }
 }
