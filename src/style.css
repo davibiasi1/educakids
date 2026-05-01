@@ -659,3 +659,196 @@ body{
     font-size: 44px;
   }
 }
+
+/* =========================
+   PERFIL
+========================= */
+
+.perfil-page {
+  padding: 10px 0 40px;
+}
+
+.perfil-header {
+  background: linear-gradient(135deg, #e9fbfa, #fff7f1);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  padding: 34px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 24px;
+}
+
+.perfil-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  background: var(--mint);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 12px 24px rgba(47, 212, 200, 0.28);
+}
+
+.perfil-avatar span {
+  font-size: 42px;
+  color: white;
+  font-weight: 900;
+}
+
+.perfil-header h1 {
+  margin: 0 0 8px;
+  font-size: 38px;
+  font-weight: 1000;
+}
+
+.perfil-header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.perfil-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.perfil-stat-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.perfil-stat-icon {
+  font-size: 32px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.perfil-stat-card h2 {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 1000;
+}
+
+.perfil-stat-card p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.perfil-stat-card--gold {
+  background: #fff7dc;
+}
+
+.perfil-stat-card--purple {
+  background: var(--purple-soft);
+}
+
+.perfil-stat-card--mint {
+  background: var(--mint-soft);
+}
+
+.perfil-content-grid {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 22px;
+}
+
+.perfil-box {
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.perfil-box h2 {
+  margin: 0 0 18px;
+  font-size: 26px;
+  font-weight: 1000;
+}
+
+.perfil-progress-item {
+  margin-bottom: 18px;
+}
+
+.perfil-progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-weight: 800;
+}
+
+.perfil-progress-info span {
+  color: #333;
+}
+
+.perfil-progress-info strong {
+  color: var(--mint);
+}
+
+.perfil-progress-bar {
+  height: 12px;
+  background: #efeff5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.perfil-progress-bar div {
+  height: 100%;
+  background: linear-gradient(90deg, var(--mint), var(--orange));
+  border-radius: 999px;
+}
+
+.perfil-reward {
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  background: #fbfaf7;
+  margin-bottom: 12px;
+}
+
+.perfil-reward span {
+  font-size: 30px;
+}
+
+.perfil-reward strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+
+.perfil-reward p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.avatar {
+  text-decoration: none;
+  display: grid;
+  place-items: center;
+}
+
+@media (max-width: 900px) {
+  .perfil-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 28px 20px;
+  }
+
+  .perfil-header h1 {
+    font-size: 30px;
+  }
+
+  .perfil-stats,
+  .perfil-content-grid {
+    grid-template-columns: 1fr;
+  }
+}

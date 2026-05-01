@@ -29,6 +29,21 @@ function getNavLinks() {
   `;
 }
 
+function getAvatar(user) {
+  const currentPath = getCurrentPath();
+
+  return `
+    <a 
+      class="avatar ${currentPath === '/perfil' ? 'avatar--active' : ''}" 
+      href="#/perfil" 
+      aria-label="Perfil" 
+      title="${user ? user.name : 'Perfil'}"
+    >
+      <span class="avatar__icon">☺</span>
+    </a>
+  `;
+}
+
 export function renderLayout() {
   const isLoggedIn = auth.isAuthenticated();
   const user = auth.getUser();
@@ -67,9 +82,7 @@ export function renderLayout() {
             : `<a class="logout-btn" href="#/login">Login</a>`
           }
 
-          <button class="avatar" aria-label="Perfil" title="${user ? user.name : 'Perfil'}">
-            <span class="avatar__icon">☺</span>
-          </button>
+          ${getAvatar(user)}
         </div>
       </header>
 
@@ -115,9 +128,7 @@ export function updateLayout() {
         : `<a class="logout-btn" href="#/login">Login</a>`
       }
 
-      <button class="avatar" aria-label="Perfil" title="${user ? user.name : 'Perfil'}">
-        <span class="avatar__icon">☺</span>
-      </button>
+      ${getAvatar(user)}
     </div>
   `;
 
