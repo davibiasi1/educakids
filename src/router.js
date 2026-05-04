@@ -1,5 +1,5 @@
 import { HomePage } from "./pages/home.js";
-import { VideosPage } from "./pages/videos.js";
+import { VideosPage, initVideosPage } from "./pages/videos.js";
 import { RecompensasPage } from "./pages/recompensas.js";
 import { ProgressoPage } from "./pages/progresso.js";
 import { LoginPage } from "./pages/login.js";
@@ -7,16 +7,21 @@ import { CadastroPage } from "./pages/cadastro.js";
 import { updateLayout } from "./components/layout.js";
 import { SobrePage } from "./pages/sobre.js";
 import { PerfilPage } from "./pages/perfil.js";
+import { AdminVideosPage, initAdminVideosPage } from "./pages/admin-videos.js";
+import { PlayerPage, initPlayerPage, cleanupPlayer } from "./pages/player.js";
 
 const routes = {
   "/home": HomePage,
   "/videos": VideosPage,
+  "/trilhas": VideosPage,
   "/recompensas": RecompensasPage,
   "/progresso": ProgressoPage,
   "/login": LoginPage,
   "/cadastro": CadastroPage,
   "/sobre": SobrePage,
   "/perfil": PerfilPage,
+  "/admin-videos": AdminVideosPage,
+  "/player": PlayerPage,
 };
 
 function getRoute() {
@@ -30,11 +35,29 @@ function render() {
   const view = document.querySelector("#view");
   const { path, params } = getRoute();
 
+  // Cleanup do player ao sair
+  cleanupPlayer();
+
   const page = routes[path] || HomePage;
   view.innerHTML = page(params);
   
   // Atualizar layout sempre que mudar de página
   updateLayout();
+  
+  // Inicializar página admin se for a rota correta
+  if (path === '/admin-videos') {
+    initAdminVideosPage();
+  }
+  
+  // Inicializar player se for a rota correta
+  if (path === '/player') {
+    initPlayerPage(params);
+  }
+  
+  // Inicializar página de vídeos se for a rota correta
+  if (path === '/videos' || path === '/trilhas') {
+    initVideosPage();
+  }
 }
 
 export function initRouter() {

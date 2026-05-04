@@ -1,4 +1,4 @@
-import { auth } from '../services/api.js';
+import { auth, api } from '../services/api.js';
 
 function setupLogoutButton() {
   setTimeout(() => {
@@ -26,6 +26,7 @@ function getNavLinks() {
     <a class="navlink ${currentPath === '/recompensas' ? 'navlink--active' : ''}" href="#/recompensas">Recompensas</a>
     <a class="navlink ${currentPath === '/progresso' ? 'navlink--active' : ''}" href="#/progresso">Progresso</a>
     <a class="navlink ${currentPath === '/sobre' ? 'navlink--active' : ''}" href="#/sobre">Sobre</a>
+    <a class="navlink ${currentPath === '/admin-videos' ? 'navlink--active' : ''}" href="#/admin-videos">Admin</a>
   `;
 }
 
@@ -71,11 +72,11 @@ export function renderLayout() {
           ${isLoggedIn ? `
             <div class="chip chip--gold">
               <span class="chip__icon">★</span>
-              <span class="chip__value" id="starsValue">245</span>
+              <span class="chip__value" id="starsValue">0</span>
             </div>
             <div class="chip chip--purple">
               <span class="chip__icon">🏆</span>
-              <span class="chip__value" id="trophyValue">12</span>
+              <span class="chip__value" id="trophyValue">0</span>
             </div>
           ` : ''}
           ${isLoggedIn
@@ -93,7 +94,7 @@ export function renderLayout() {
   `;
 }
 
-export function updateLayout() {
+export async function updateLayout() {
   const topbar = document.getElementById('topbar');
   if (!topbar) return;
 
@@ -119,11 +120,11 @@ export function updateLayout() {
       ${isLoggedIn ? `
         <div class="chip chip--gold">
           <span class="chip__icon">★</span>
-          <span class="chip__value" id="starsValue">245</span>
+          <span class="chip__value" id="starsValue">0</span>
         </div>
         <div class="chip chip--purple">
           <span class="chip__icon">🏆</span>
-          <span class="chip__value" id="trophyValue">12</span>
+          <span class="chip__value" id="trophyValue">0</span>
         </div>
       ` : ''}
       ${isLoggedIn
@@ -138,4 +139,39 @@ export function updateLayout() {
 
   topbar.innerHTML = newTopbar;
   setupLogoutButton();
+  
+  // Atualizar valores reais de estrelas e troféus
+  if (isLoggedIn) {
+    updateUserStats();
+  }
+}
+
+export async function updateUserStats() {
+  try {
+    console.log('🔄 Atualizando estatísticas do usuário...');
+    const profile = await api.getProfile();
+    console.log('📊 Dados do perfil recebidos:', profile);
+    
+    const starsElement = document.getElementById('starsValue');
+    const trophyElement = document.getElementById('trophyValue');
+    
+    if (starsElement) {
+      starsElement.textContent = profile.stars || 0;
+      console.log('⭐ Estrelas atualizadas:', profile.stars || 0);
+    } else {
+      console.warn('⚠️ Elemento starsValue não encontrado!');
+    }
+    
+    if (trophyElement) {
+      trophyElement.textContent = profile.trophies || 0;
+      console.log('🏆 Troféus atualizados:', profile.trophies || 0);
+    } else {
+      console.warn('⚠️ Elemento trophyValue não encontrado!');
+    }
+    
+    // Atualizar também o localStorage com dados atualizados
+    auth.saveUser(profile);
+  } catch (error) {
+    console.error('❌ Erro ao atualizar estatísticas do usuário:', error);
+  }
 }

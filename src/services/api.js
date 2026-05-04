@@ -60,6 +60,73 @@ export const api = {
 
     return data;
   },
+
+  // Métodos de vídeos
+  async getAllVideos() {
+    const response = await fetch(`${API_URL}/videos`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar vídeos');
+    }
+
+    return data;
+  },
+
+  async getVideoById(id) {
+    const response = await fetch(`${API_URL}/videos/${id}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar vídeo');
+    }
+
+    return data;
+  },
+
+  async getUserProgress() {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      throw new Error('Não autenticado');
+    }
+
+    const response = await fetch(`${API_URL}/videos/progress/my`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar progresso');
+    }
+
+    return data;
+  },
+
+  async getVideoProgress(videoId) {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      throw new Error('Não autenticado');
+    }
+
+    const response = await fetch(`${API_URL}/videos/progress/${videoId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar progresso do vídeo');
+    }
+
+    return data;
+  },
 };
 
 export const auth = {

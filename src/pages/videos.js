@@ -1,262 +1,120 @@
-const videos = [
-  // 2 anos
-  {
-    idade: "2 anos",
-    categoria: "Português",
-    titulo: "Música A E I O U",
-    estrelas: 15,
-    progresso: 0,
-    youtubeId: "WyA6GscP4DA"
-  },
-  {
-    idade: "2 anos",
-    categoria: "Português",
-    titulo: "Música animada",
-    estrelas: 15,
-    progresso: 0,
-    youtubeId: "x5Dm5FcvIOw"
-  },
+import { api, auth } from '../services/api.js';
+import { updateUserStats } from '../components/layout.js';
 
-  // 3 anos
-  {
-    idade: "3 anos",
-    categoria: "Português",
-    titulo: "Aprendendo o ABC",
-    estrelas: 20,
-    progresso: 0,
-    youtubeId: "SlHhTvDFYWY"
-  },
-  {
-    idade: "3 anos",
-    categoria: "Artes",
-    titulo: "As Cores",
-    estrelas: 20,
-    progresso: 0,
-    youtubeId: "UuSngn7iR44"
-  },
-  {
-    idade: "3 anos",
-    categoria: "Matemática",
-    titulo: "Aprender os números de 1 a 10",
-    estrelas: 20,
-    progresso: 0,
-    youtubeId: "wxabvrLWImw"
-  },
+let allVideos = [];
+let userProgress = {};
 
-  // 4 anos
-  {
-    idade: "4 anos",
-    categoria: "Português",
-    titulo: "Aprender ABC",
-    estrelas: 20,
-    progresso: 0,
-    youtubeId: "eaZoO7dIZwA"
-  },
-  {
-    idade: "4 anos",
-    categoria: "Português",
-    titulo: "Música A E I O U",
-    estrelas: 15,
-    progresso: 0,
-    youtubeId: "WyA6GscP4DA"
-  },
-  {
-    idade: "4 anos",
-    categoria: "Matemática",
-    titulo: "Contar até 10 e quantidade",
-    estrelas: 20,
-    progresso: 0,
-    youtubeId: "FgV7rw7PyvM"
-  },
-  {
-    idade: "4 anos",
-    categoria: "Matemática",
-    titulo: "Conta de somar",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "T17JjsaohpI"
-  },
-  {
-    idade: "4 anos",
-    categoria: "Aprendendo cantando",
-    titulo: "Relembrando música animada",
-    estrelas: 15,
-    progresso: 0,
-    youtubeId: "x5Dm5FcvIOw"
-  },
+export function VideosPage() {
+  return `
+    <section class="page">
+      <h2 class="page__title">Vídeos <span class="page__titleAccent">Educativos</span></h2>
+      <p class="page__subtitle">Explore nossos vídeos incríveis e ganhe estrelas enquanto aprende coisas novas!</p>
+      
+      <div id="videosContent">
+        <div class="loading-message">Carregando vídeos...</div>
+      </div>
+    </section>
+  `;
+}
 
-  // 5 anos
-  {
-    idade: "5 anos",
-    categoria: "Português",
-    titulo: "Som da letra B mais sílabas",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "gu6x7ziiGAw"
-  },
-  {
-    idade: "5 anos",
-    categoria: "Português",
-    titulo: "Ler palavras com a letra B",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "lVqxryHlxW4"
-  },
-  {
-    idade: "5 anos",
-    categoria: "Português",
-    titulo: "Som da letra C mais sílabas",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "E9-eRvn80-0"
-  },
-  {
-    idade: "5 anos",
-    categoria: "Português",
-    titulo: "Ler palavras com a letra C",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "6xCLwV7JYFs"
-  },
-  {
-    idade: "5 anos",
-    categoria: "Português",
-    titulo: "Som da letra D mais sílabas",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "31CaY9N4tr8"
-  },
-  {
-    idade: "5 anos",
-    categoria: "Português",
-    titulo: "Ler palavras com a letra D",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "Ws2T8K1k5IE"
-  },
-  {
-    idade: "5 anos",
-    categoria: "Português",
-    titulo: "Som da letra F mais sílabas",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "xGZ4W71uOjc"
-  },
-  {
-    idade: "5 anos",
-    categoria: "Português",
-    titulo: "Ler palavras com a letra F",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "OrfF-ittK80"
-  },
-  {
-    idade: "5 anos",
-    categoria: "Português",
-    titulo: "Som da letra G mais sílabas",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "a5T-49eoTIo"
-  },
-  {
-    idade: "5 anos",
-    categoria: "Português",
-    titulo: "Ler palavras com a letra G",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "T7tGmKZ2ovM"
-  },
-  {
-    idade: "5 anos",
-    categoria: "Português",
-    titulo: "Animais na fazenda",
-    estrelas: 20,
-    progresso: 0,
-    youtubeId: "Y-DMGRJr1OU"
-  },
-
-  // 6 anos
-  {
-    idade: "6 anos",
-    categoria: "Português",
-    titulo: "Aprendendo numerais",
-    estrelas: 20,
-    progresso: 0,
-    youtubeId: "W6tNQo2_cFQ"
-  },
-  {
-    idade: "6 anos",
-    categoria: "Português",
-    titulo: "Aprendendo a formar palavras",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "F6RL-oLcALQ"
-  },
-  {
-    idade: "6 anos",
-    categoria: "Matemática",
-    titulo: "Conta de somar",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "T17JjsaohpI"
-  },
-  {
-    idade: "6 anos",
-    categoria: "Matemática",
-    titulo: "Atividade de matemática",
-    estrelas: 25,
-    progresso: 0,
-    youtubeId: "rljiBbTOFvc"
-  },
-
-  // 7 anos
-  {
-    idade: "7 anos",
-    categoria: "Português",
-    titulo: "Gênero textual",
-    estrelas: 30,
-    progresso: 0,
-    youtubeId: "ZE78-r0KMOc"
-  },
-  {
-    idade: "7 anos",
-    categoria: "Ciência",
-    titulo: "Sistema solar para crianças",
-    estrelas: 30,
-    progresso: 0,
-    youtubeId: "NpewGvMrr6o"
-  },
-  {
-    idade: "7 anos",
-    categoria: "Ciência",
-    titulo: "Importância do Sol",
-    estrelas: 30,
-    progresso: 0,
-    youtubeId: "YYFWXKbie-k"
-  },
-  {
-    idade: "7 anos",
-    categoria: "Ciência",
-    titulo: "Divertindo com ciência",
-    estrelas: 30,
-    progresso: 0,
-    youtubeId: "BTPmIFV1q0U"
+export async function initVideosPage() {
+  try {
+    // Buscar todos os vídeos
+    allVideos = await api.getAllVideos();
+    
+    // Buscar progresso do usuário (se logado)
+    if (auth.isAuthenticated()) {
+      try {
+        const progressData = await api.getUserProgress();
+        // Converter para objeto para acesso rápido por videoId
+        userProgress = progressData.reduce((acc, p) => {
+          acc[p.videoId] = p;
+          return acc;
+        }, {});
+        console.log('Progresso do usuário carregado:', Object.keys(userProgress).length, 'vídeos');
+        
+        // Atualizar estrelas no header
+        updateUserStats();
+      } catch (err) {
+        console.log('Usuário sem progresso:', err);
+      }
+    }
+    
+    renderVideos();
+  } catch (error) {
+    console.error('Erro ao carregar vídeos:', error);
+    document.getElementById('videosContent').innerHTML = `
+      <div class="error-message">
+        <p>❌ Erro ao carregar vídeos</p>
+        <button class="btn btn--primary" onclick="location.reload()">Tentar novamente</button>
+      </div>
+    `;
   }
-];
+}
 
-const idades = ["2 anos", "3 anos", "4 anos", "5 anos", "6 anos", "7 anos", "8 anos"];
+function renderVideos() {
+  const videosContent = document.getElementById('videosContent');
+  
+  if (allVideos.length === 0) {
+    videosContent.innerHTML = `
+      <div class="empty-state">
+        <p>Nenhum vídeo cadastrado ainda.</p>
+        <a href="#/admin-videos" class="btn btn--primary">Cadastrar vídeos</a>
+      </div>
+    `;
+    return;
+  }
+  
+  // Agrupar vídeos por idade
+  const videosPorIdade = allVideos.reduce((acc, video) => {
+    if (!acc[video.idade]) {
+      acc[video.idade] = [];
+    }
+    acc[video.idade].push(video);
+    return acc;
+  }, {});
+  
+  // Ordenar idades
+  const idades = Object.keys(videosPorIdade).sort((a, b) => {
+    const numA = parseInt(a);
+    const numB = parseInt(b);
+    return numA - numB;
+  });
+  
+  // Renderizar seções por idade
+  videosContent.innerHTML = idades.map(idade => renderIdadeSection(idade, videosPorIdade[idade])).join('');
+}
+
+function renderIdadeSection(idade, videos) {
+  return `
+    <section class="videoAgeSection">
+      <div class="videoAgeHeader">
+        <h2>${idade}</h2>
+        <span>${videos.length} vídeo(s)</span>
+      </div>
+
+      <div class="gridVideos">
+        ${videos.map(video => renderVideoCard(video)).join('')}
+      </div>
+    </section>
+  `;
+}
 
 function renderVideoCard(video) {
+  const progress = userProgress[video.id] || null;
+  const progressPercent = progress ? Math.floor(progress.progress) : 0;
+  const stars = progress ? progress.stars : 0;
+  const isCompleted = progress ? progress.completed : false;
+  
   return `
     <article class="videoCard">
       <div class="videoEmbed">
-        <iframe
-          src="https://www.youtube.com/embed/${video.youtubeId}"
-          title="${video.titulo}"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen>
-        </iframe>
+        <img 
+          src="https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg" 
+          alt="${video.titulo}"
+          class="video-thumbnail"
+        />
+        ${isCompleted ? '<div class="video-completed-badge">✓ Concluído</div>' : ''}
       </div>
 
       <div class="videoBody">
@@ -267,61 +125,26 @@ function renderVideoCard(video) {
 
         <h2 class="videoTitle">${video.titulo}</h2>
 
-        ${video.progresso > 0 ? `
+        ${progressPercent > 0 ? `
           <div class="progressRow">
             <div class="progressBar">
-              <div class="progressBar__fill" style="width:${video.progresso}%"></div>
+              <div class="progressBar__fill" style="width:${progressPercent}%"></div>
             </div>
-            <div class="progressText">${video.progresso}% assistido</div>
+            <div class="progressText">${progressPercent}% assistido</div>
           </div>
         ` : ''}
 
         <div class="videoFooter">
           <div class="rewardRow">
             <span class="rewardStar">★</span>
-            <span>+${video.estrelas} estrelas</span>
+            <span>${stars} / 20 estrelas</span>
           </div>
 
-          <a class="btn btn--pill btn--mint" href="#/videos?video=${video.youtubeId}">
-            Assistir
+          <a class="btn btn--pill ${progressPercent > 0 ? 'btn--orange' : 'btn--mint'}" href="#/player?id=${video.id}">
+            ${progressPercent > 0 ? 'Continuar' : 'Assistir'}
           </a>
         </div>
       </div>
     </article>
-  `;
-}
-
-function renderIdadeSection(idade) {
-  const videosDaIdade = videos.filter(video => video.idade === idade);
-
-  return `
-    <section class="videoAgeSection">
-      <div class="videoAgeHeader">
-        <h2>${idade}</h2>
-        <span>${videosDaIdade.length} vídeo(s)</span>
-      </div>
-
-      ${
-        videosDaIdade.length > 0
-          ? `<div class="gridVideos">${videosDaIdade.map(renderVideoCard).join("")}</div>`
-          : `<div class="panel">Nenhum vídeo cadastrado para esta idade ainda.</div>`
-      }
-    </section>
-  `;
-}
-
-export function VideosPage() {
-  return `
-    <section class="page videos-dashboard">
-      <h1 class="page__title">
-        Vídeos <span class="page__titleAccent">Educativos</span>
-      </h1>
-
-      <p class="page__subtitle">
-        Explore vídeos por idade, matéria e ganhe estrelas enquanto aprende.
-      </p>
-
-      ${idades.map(renderIdadeSection).join("")}
-    </section>
   `;
 }
