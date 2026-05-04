@@ -52,21 +52,21 @@ export function renderLayout() {
         </nav>
 
         <div class="topbar__right">
-          <div class="chip chip--gold">
-            <span class="chip__icon">★</span>
-            <span class="chip__value" id="starsValue">245</span>
-          </div>
-
-          <div class="chip chip--purple">
-            <span class="chip__icon">🏆</span>
-            <span class="chip__value" id="trophyValue">12</span>
-          </div>
-
+          ${isLoggedIn && user && user.name ? `<span class="user-name">${user.name}</span>` : ''}
+          ${isLoggedIn ? `
+            <div class="chip chip--gold">
+              <span class="chip__icon">★</span>
+              <span class="chip__value" id="starsValue">245</span>
+            </div>
+            <div class="chip chip--purple">
+              <span class="chip__icon">🏆</span>
+              <span class="chip__value" id="trophyValue">12</span>
+            </div>
+          ` : ''}
           ${isLoggedIn
             ? `<a class="logout-btn" href="#" id="logout-btn">Sair</a>`
             : `<a class="logout-btn" href="#/login">Login</a>`
           }
-
           <button class="avatar" aria-label="Perfil" title="${user ? user.name : 'Perfil'}">
             <span class="avatar__icon">☺</span>
           </button>
@@ -100,21 +100,21 @@ export function updateLayout() {
     </nav>
 
     <div class="topbar__right">
-      <div class="chip chip--gold">
-        <span class="chip__icon">★</span>
-        <span class="chip__value" id="starsValue">245</span>
-      </div>
-
-      <div class="chip chip--purple">
-        <span class="chip__icon">🏆</span>
-        <span class="chip__value" id="trophyValue">12</span>
-      </div>
-
+      ${isLoggedIn && user && user.name ? `<span class="user-name">${user.name}</span>` : ''}
+      ${isLoggedIn ? `
+        <div class="chip chip--gold">
+          <span class="chip__icon">★</span>
+          <span class="chip__value" id="starsValue">245</span>
+        </div>
+        <div class="chip chip--purple">
+          <span class="chip__icon">🏆</span>
+          <span class="chip__value" id="trophyValue">12</span>
+        </div>
+      ` : ''}
       ${isLoggedIn
         ? `<a class="logout-btn" href="#" id="logout-btn">Sair</a>`
         : `<a class="logout-btn" href="#/login">Login</a>`
       }
-
       <button class="avatar" aria-label="Perfil" title="${user ? user.name : 'Perfil'}">
         <span class="avatar__icon">☺</span>
       </button>
