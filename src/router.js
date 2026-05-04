@@ -6,6 +6,7 @@ import { LoginPage } from "./pages/login.js";
 import { CadastroPage } from "./pages/cadastro.js";
 import { updateLayout } from "./components/layout.js";
 import { SobrePage } from "./pages/sobre.js";
+import { PerfilPage } from "./pages/perfil.js";
 
 const routes = {
   "/home": HomePage,
@@ -15,6 +16,7 @@ const routes = {
   "/login": LoginPage,
   "/cadastro": CadastroPage,
   "/sobre": SobrePage,
+  "/perfil": PerfilPage,
 };
 
 function getRoute() {

@@ -29,6 +29,21 @@ function getNavLinks() {
   `;
 }
 
+function getAvatar(user) {
+  const currentPath = getCurrentPath();
+
+  return `
+    <a 
+      class="avatar ${currentPath === '/perfil' ? 'avatar--active' : ''}" 
+      href="#/perfil" 
+      aria-label="Perfil" 
+      title="${user ? user.name : 'Perfil'}"
+    >
+      <span class="avatar__icon">☺</span>
+    </a>
+  `;
+}
+
 export function renderLayout() {
   const isLoggedIn = auth.isAuthenticated();
   const user = auth.getUser();
