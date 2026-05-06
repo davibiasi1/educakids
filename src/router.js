@@ -1,7 +1,7 @@
 import { HomePage } from "./pages/home.js";
 import { VideosPage, initVideosPage } from "./pages/videos.js";
 import { RecompensasPage, initRecompensasPage } from "./pages/recompensas.js";
-import { ProgressoPage } from "./pages/progresso.js";
+import { ProgressoPage, initProgressoPage } from "./pages/progresso.js";
 import { LoginPage } from "./pages/login.js";
 import { CadastroPage } from "./pages/cadastro.js";
 import { updateLayout } from "./components/layout.js";
@@ -67,6 +67,11 @@ function render() {
   // Inicializar página de recompensas se for a rota correta
   if (path === '/recompensas') {
     initRecompensasPage();
+  }
+  
+  // Inicializar página de progresso se for a rota correta
+  if (path === '/progresso') {
+    initProgressoPage();
   }
 }
 
