@@ -5,12 +5,12 @@ export function ProgressoPage() {
     <section class="progresso-page">
       <div class="ai-header">
         <div class="ai-icon">
-          <svg class="ai-sparkles" width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+          <svg class="ai-sparkles" width="90" height="90" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="sparkle-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#afffff;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+                <stop offset="0%" style="stop-color:#ff8a5b;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#f58c57;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#ff9d6f;stop-opacity:1" />
               </linearGradient>
             </defs>
             <!-- Estrela grande central -->
