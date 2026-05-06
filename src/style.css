@@ -187,6 +187,8 @@ body{
   text-decoration:none;
   font-weight: 900;
   border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 .btn__icon{
   font-size: 14px;
@@ -201,6 +203,19 @@ body{
   background: rgba(47,212,200,.08);
   color: #0c9f95;
   border-color: rgba(47,212,200,.7);
+}
+.btn--small{
+  padding: 8px 16px;
+  font-size: 13px;
+}
+.btn--outline{
+  background: transparent;
+  border: 2px solid var(--mint);
+  color: var(--mint);
+}
+.btn--outline:hover{
+  background: var(--mint);
+  color: #fff;
 }
 
 .hero__stats{
@@ -711,9 +726,13 @@ body{
 
 .perfil-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 18px;
   margin-bottom: 24px;
+}
+
+.perfil-stats--three {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .perfil-stat-card {
@@ -751,6 +770,10 @@ body{
 
 .perfil-stat-card--mint {
   background: var(--mint-soft);
+}
+
+.perfil-stat-card--blue {
+  background: #e0f0ff;
 }
 
 .perfil-content-grid {
@@ -796,12 +819,43 @@ body{
   background: #efeff5;
   border-radius: 999px;
   overflow: hidden;
+  margin-bottom: 8px;
 }
 
-.perfil-progress-bar div {
+.perfil-progress-bar div,
+.perfil-progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--mint), var(--orange));
   border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.perfil-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.perfil-progress-meta small {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 8px;
+}
+
+.badge--success {
+  background: #d4f4dd;
+  color: #0d7a2a;
 }
 
 .perfil-reward {
@@ -815,6 +869,56 @@ body{
 
 .perfil-reward span {
   font-size: 30px;
+}
+
+/* Medalhas no perfil */
+.perfil-medal-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+}
+
+.perfil-medal-item:hover {
+  background: #f3f4f6;
+  transform: translateX(4px);
+}
+
+.perfil-medal-icon {
+  font-size: 36px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.perfil-medal-info {
+  flex: 1;
+}
+
+.perfil-medal-info strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.perfil-medal-info p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.perfil-medal-info small {
+  font-size: 11px;
+}
+
+.perfil-medal-check {
+  font-size: 24px;
+  color: var(--mint);
+  font-weight: bold;
 }
 
 .perfil-reward strong {
@@ -849,6 +953,11 @@ body{
 
   .perfil-stats,
   .perfil-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .perfil-stats,
+  .perfil-stats--three {
     grid-template-columns: 1fr;
   }
 }
@@ -1161,6 +1270,302 @@ body{
   text-align: center;
   color: var(--muted);
   padding: 24px;
+}
+
+/* RECOMPENSAS (MEDALHAS) */
+.recompensas-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.recompensas-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.recompensas-stat {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+
+.recompensas-stat:hover {
+  transform: translateY(-4px);
+}
+
+.recompensas-stat-icon {
+  font-size: 40px;
+}
+
+.recompensas-stat h3 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 1000;
+  background: linear-gradient(135deg, var(--mint), var(--orange));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.recompensas-stat p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.medals-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  justify-content: center;
+}
+
+.filter-btn {
+  padding: 10px 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  border-color: var(--mint);
+  color: var(--mint);
+  transform: translateY(-2px);
+}
+
+.filter-btn.active {
+  background: var(--mint);
+  border-color: var(--mint);
+  color: #fff;
+}
+
+.medals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.medal-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  border: 3px solid transparent;
+}
+
+.medal-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(25, 25, 40, 0.12);
+}
+
+.medal-card--unlocked {
+  border-color: var(--mint);
+}
+
+.medal-card--locked {
+  opacity: 0.6;
+}
+
+.medal-card--bronze {
+  background: linear-gradient(135deg, #fff 0%, #fef3e6 100%);
+}
+
+.medal-card--silver {
+  background: linear-gradient(135deg, #fff 0%, #f0f4f8 100%);
+}
+
+.medal-card--gold {
+  background: linear-gradient(135deg, #fff 0%, #fef9e7 100%);
+}
+
+.medal-card--legendary {
+  background: linear-gradient(135deg, #fff 0%, #f3e8ff 100%);
+  border-color: var(--purple);
+}
+
+.medal-card--legendary::before {
+  content: '✨';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  animation: sparkle 2s infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+.medal-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  display: inline-block;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.medal-icon--locked {
+  filter: grayscale(100%);
+  opacity: 0.4;
+  animation: none;
+}
+
+.medal-name {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.medal-description {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.medal-requirement {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.medal-unlocked-badge {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  padding: 10px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.medal-unlocked-badge span {
+  font-size: 16px;
+  margin-right: 4px;
+}
+
+.medal-progress {
+  margin-top: 12px;
+}
+
+.medal-progress-bar {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.medal-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--mint), var(--orange));
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.medal-progress small {
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.medal-rarity {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.medal-rarity--bronze {
+  background: #fef3e6;
+  color: #d97706;
+  border: 2px solid #f59e0b;
+}
+
+.medal-rarity--silver {
+  background: #f0f4f8;
+  color: #64748b;
+  border: 2px solid #94a3b8;
+}
+
+.medal-rarity--gold {
+  background: #fef9e7;
+  color: #ca8a04;
+  border: 2px solid #eab308;
+}
+
+.medal-rarity--legendary {
+  background: #f3e8ff;
+  color: #7c3aed;
+  border: 2px solid #9b7cff;
+  animation: glow 2s infinite;
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(155, 124, 255, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(155, 124, 255, 0.8); }
+}
+
+@media (max-width: 900px) {
+  .perfil-stats--three {
+    grid-template-columns: 1fr;
+  }
+
+  .recompensas-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .medals-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .medals-filters {
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    flex: 1 1 auto;
+    min-width: 100px;
+  }
 }
 
 

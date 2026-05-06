@@ -1,12 +1,12 @@
 import { HomePage } from "./pages/home.js";
 import { VideosPage, initVideosPage } from "./pages/videos.js";
-import { RecompensasPage } from "./pages/recompensas.js";
+import { RecompensasPage, initRecompensasPage } from "./pages/recompensas.js";
 import { ProgressoPage } from "./pages/progresso.js";
 import { LoginPage } from "./pages/login.js";
 import { CadastroPage } from "./pages/cadastro.js";
 import { updateLayout } from "./components/layout.js";
 import { SobrePage } from "./pages/sobre.js";
-import { PerfilPage } from "./pages/perfil.js";
+import { PerfilPage, initPerfilPage } from "./pages/perfil.js";
 import { AdminVideosPage, initAdminVideosPage } from "./pages/admin-videos.js";
 import { PlayerPage, initPlayerPage, cleanupPlayer } from "./pages/player.js";
 
@@ -57,6 +57,16 @@ function render() {
   // Inicializar página de vídeos se for a rota correta
   if (path === '/videos' || path === '/trilhas') {
     initVideosPage();
+  }
+  
+  // Inicializar página de perfil se for a rota correta
+  if (path === '/perfil') {
+    initPerfilPage();
+  }
+  
+  // Inicializar página de recompensas se for a rota correta
+  if (path === '/recompensas') {
+    initRecompensasPage();
   }
 }
 

@@ -83,9 +83,9 @@ export function renderLayout() {
             ? `<a class="logout-btn" href="#" id="logout-btn">Sair</a>`
             : `<a class="logout-btn" href="#/login">Login</a>`
           }
-          <button class="avatar" aria-label="Perfil" title="${user ? user.name : 'Perfil'}">
+          <a class="avatar" href="#/perfil" aria-label="Perfil" title="${user ? user.name : 'Perfil'}">
             <span class="avatar__icon">☺</span>
-          </button>
+          </a>
         </div>
       </header>
 
@@ -131,9 +131,9 @@ export async function updateLayout() {
         ? `<a class="logout-btn" href="#" id="logout-btn">Sair</a>`
         : `<a class="logout-btn" href="#/login">Login</a>`
       }
-      <button class="avatar" aria-label="Perfil" title="${user ? user.name : 'Perfil'}">
+      <a class="avatar" href="#/perfil" aria-label="Perfil" title="${user ? user.name : 'Perfil'}">
         <span class="avatar__icon">☺</span>
-      </button>
+      </a>
     </div>
   `;
 
