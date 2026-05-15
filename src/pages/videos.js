@@ -140,8 +140,8 @@ function renderVideoCard(video) {
             <span>${stars} / 20 estrelas</span>
           </div>
 
-          <a class="btn btn--pill ${progressPercent > 0 ? 'btn--orange' : 'btn--mint'}" href="#/player?id=${video.id}">
-            ${progressPercent > 0 ? 'Continuar' : 'Assistir'}
+          <a class="btn btn--pill ${progressPercent === 100 ? 'btn--ghost' : progressPercent > 0 ? 'btn--orange' : 'btn--mint'}" href="#/player?id=${video.id}">
+            ${progressPercent === 100 ? 'Reassistir' : progressPercent > 0 ? 'Continuar' : 'Assistir'}
           </a>
         </div>
       </div>

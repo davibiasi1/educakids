@@ -1,4 +1,16 @@
+import { auth } from '../services/api.js';
+
 export function HomePage() {
+  const isLoggedIn = auth.isAuthenticated();
+
+  const actions = isLoggedIn
+    ? `<a class="btn btn--ghost" href="#/videos">Ver Vídeos</a>`
+    : `
+        <a class="btn btn--primary" href="#/login">
+          <span class="btn__icon">▶</span> Começar Agora
+        </a>
+      `;
+
   return `
     <section class="hero hero--shapes">
       <div class="hero__badge">✨ Aprender é divertido!</div>
@@ -12,10 +24,7 @@ export function HomePage() {
       </p>
 
       <div class="hero__actions">
-        <a class="btn btn--primary" href="#/videos">
-          <span class="btn__icon">▶</span> Começar Agora
-        </a>
-        <a class="btn btn--ghost" href="#/videos">Ver Vídeos</a>
+        ${actions}
       </div>
 
       <div class="hero__stats">

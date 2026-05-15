@@ -5,9 +5,10 @@ let player;
 let videoData;
 let progressInterval;
 let currentProgress = 0;
-let maxProgressReached = 0; // Rastrear o progresso máximo já atingido
-let lastSavedTime = 0; // Última posição salva em segundos
-let videoCompleted = false; // Flag para vídeo completo
+let maxProgressReached = 0;
+let maxStarsEarned = 0; // Estrelas máximas já conquistadas neste vídeo
+let lastSavedTime = 0;
+let videoCompleted = false;
 
 export function PlayerPage(params) {
   const videoId = params.id;
@@ -96,7 +97,8 @@ export async function initPlayerPage(params) {
         if (progressResponse.ok) {
           const progressData = await progressResponse.json();
           currentProgress = progressData.progress || 0;
-          maxProgressReached = currentProgress; // Inicializar progresso máximo
+          maxProgressReached = currentProgress;
+          maxStarsEarned = progressData.stars || 0;
           videoCompleted = progressData.completed || false;
           updateProgressUI(currentProgress, progressData.stars || 0, progressData.completed ? 1 : 0);
           console.log('Progresso carregado:', currentProgress + '%', videoCompleted ? '(Vídeo já completo)' : '');
@@ -185,45 +187,45 @@ function startProgressTracking() {
     
     if (duration > 0) {
       // PROTEÇÃO ANTI-TRAPAÇA: Verificar se usuário tentou pular
-      if (currentTime > lastSavedTime + 5) {
-        // Se pulou mais de 5 segundos, voltar para a posição válida
+      if (currentTime > lastSavedTime + 10) {
         console.warn('⚠️ Tentativa de pulo detectada! Voltando para posição válida.');
         player.seekTo(lastSavedTime, true);
         return;
       }
-      
+
+      // Sempre avançar lastSavedTime para evitar falsos positivos no anti-pulo
+      lastSavedTime = currentTime;
+
       let newProgress = (currentTime / duration) * 100;
-      
+
       // Considerar completo se >= 98% (evita problema de não chegar a 100%)
       if (newProgress >= 98) {
         newProgress = 100;
       }
-      
+
       newProgress = Math.min(newProgress, 100);
-      
-      // IMPORTANTE: Nunca retroceder o progresso
-      // Se o novo progresso for menor, manter o progresso atual
+
+      // IMPORTANTE: Nunca retroceder o progresso (exceto ao reassistir vídeo completo)
       if (newProgress < currentProgress && currentProgress < 100) {
-        console.log(`Progresso não retrocede: mantendo ${Math.floor(currentProgress)}% ao invés de ${Math.floor(newProgress)}%`);
         return;
       }
-      
+
       // Atualizar progresso máximo alcançado
       if (newProgress > maxProgressReached) {
         maxProgressReached = newProgress;
       }
-      
+
       // Atualizar apenas se houver mudança significativa (>1%)
       if (Math.abs(newProgress - currentProgress) > 1) {
         currentProgress = newProgress;
-        const stars = Math.floor(currentProgress / 5);
-        const trophy = currentProgress >= 100 ? 1 : 0;
-        
+        const calculatedStars = Math.floor(currentProgress / 5);
+        // Nunca exibir menos estrelas do que o máximo já conquistado
+        const stars = Math.max(calculatedStars, maxStarsEarned);
+        if (calculatedStars > maxStarsEarned) maxStarsEarned = calculatedStars;
+        const trophy = videoCompleted || currentProgress >= 100 ? 1 : 0;
+
         updateProgressUI(currentProgress, stars, trophy);
         saveProgress(currentProgress);
-        
-        // Atualizar última posição salva
-        lastSavedTime = currentTime;
       }
     }
   }, 2000); // Verificar a cada 2 segundos
@@ -296,21 +298,160 @@ async function saveProgress(progress) {
 }
 
 function showRewardNotification(rewards) {
-  let message = '';
-  
   if (rewards.starsEarned > 0) {
-    message += `⭐ +${rewards.starsEarned} estrela(s)! `;
+    spawnStarFloat();
+    const burstCount = Math.min(rewards.starsEarned + 2, 5);
+    for (let b = 0; b < burstCount; b++) {
+      setTimeout(() => spawnFireworkBurst(), b * 260);
+    }
   }
-  
+
   if (rewards.trophyEarned > 0) {
-    message += `🏆 Parabéns! Você completou o vídeo e ganhou um troféu!`;
+    spawnTrophyBanner();
   }
-  
-  if (message) {
-    // Você pode implementar um toast/notification aqui
-    console.log(message);
-    alert(message);
+}
+
+function spawnStarFloat() {
+  const directions = [
+    { tx: '-110px', left: '35vw' },
+    { tx:  '110px', left: '58vw' },
+  ];
+  const baseTop = 45 + Math.random() * 15;
+  const centerLeft = '46vw';
+
+  // +1 no centro
+  const plus = document.createElement('div');
+  plus.className = 'reward-plus-one';
+  plus.textContent = '+1';
+  plus.style.left = centerLeft;
+  plus.style.top  = baseTop + 'vh';
+  document.body.appendChild(plus);
+  plus.addEventListener('animationend', () => plus.remove());
+
+  // estrela do centro (sobe reto)
+  const centerStar = document.createElement('div');
+  centerStar.className = 'reward-star-float';
+  centerStar.textContent = '⭐';
+  centerStar.style.left = centerLeft;
+  centerStar.style.top  = baseTop + 'vh';
+  centerStar.style.setProperty('--tx', '0px');
+  document.body.appendChild(centerStar);
+  centerStar.addEventListener('animationend', () => centerStar.remove());
+
+  // estrelas laterais
+  directions.forEach(({ tx, left }, i) => {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'reward-star-float';
+      el.textContent = '⭐';
+      el.style.left = left;
+      el.style.top  = baseTop + 'vh';
+      el.style.setProperty('--tx', tx);
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }, i * 120);
+  });
+}
+
+function spawnFireworkBurst() {
+  const burst = document.createElement('div');
+  burst.className = 'fw-burst';
+  burst.style.left = (10 + Math.random() * 80) + 'vw';
+  burst.style.top  = (10 + Math.random() * 70) + 'vh';
+  document.body.appendChild(burst);
+
+  const EMOJIS = ['⭐', '✨', '🌟', '💫'];
+  const count  = 14;
+  for (let i = 0; i < count; i++) {
+    const angle    = (i / count) * 360;
+    const dist     = 70 + Math.random() * 70;
+    const rad      = (angle * Math.PI) / 180;
+    const p        = document.createElement('div');
+    p.className    = 'fw-particle';
+    p.textContent  = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+    p.style.setProperty('--tx', Math.cos(rad) * dist + 'px');
+    p.style.setProperty('--ty', Math.sin(rad) * dist + 'px');
+    p.style.setProperty('--delay', (Math.random() * 0.15) + 's');
+    burst.appendChild(p);
   }
+
+  setTimeout(() => burst.remove(), 1400);
+}
+
+function spawnTrophyBanner() {
+  const baseTop    = 38 + Math.random() * 12;
+  const centerLeft = '46vw';
+  const directions = [
+    { tx: '-120px', left: '33vw' },
+    { tx:  '120px', left: '60vw' },
+  ];
+
+  // "+1 🏆" central
+  const plus = document.createElement('div');
+  plus.className   = 'reward-trophy-plus-one';
+  plus.textContent = '+1 🏆';
+  plus.style.left  = centerLeft;
+  plus.style.top   = baseTop + 'vh';
+  document.body.appendChild(plus);
+  plus.addEventListener('animationend', () => plus.remove());
+
+  // troféu central sobe reto
+  const center = document.createElement('div');
+  center.className = 'reward-trophy-float';
+  center.textContent = '🏆';
+  center.style.left  = centerLeft;
+  center.style.top   = baseTop + 'vh';
+  center.style.setProperty('--tx', '0px');
+  document.body.appendChild(center);
+  center.addEventListener('animationend', () => center.remove());
+
+  // troféus laterais
+  directions.forEach(({ tx, left }, i) => {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className   = 'reward-trophy-float';
+      el.textContent = '🏆';
+      el.style.left  = left;
+      el.style.top   = baseTop + 'vh';
+      el.style.setProperty('--tx', tx);
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }, i * 140);
+  });
+
+  // rajadas de fogos extras (5 bursts com emojis mistos)
+  const TROPHY_EMOJIS = ['🏆', '⭐', '✨', '🌟', '💫'];
+  for (let b = 0; b < 5; b++) {
+    setTimeout(() => {
+      const burst = document.createElement('div');
+      burst.className = 'fw-burst';
+      burst.style.left = (10 + Math.random() * 80) + 'vw';
+      burst.style.top  = (10 + Math.random() * 70) + 'vh';
+      document.body.appendChild(burst);
+      for (let i = 0; i < 16; i++) {
+        const angle = (i / 16) * 360;
+        const dist  = 80 + Math.random() * 80;
+        const rad   = (angle * Math.PI) / 180;
+        const p     = document.createElement('div');
+        p.className   = 'fw-particle';
+        p.textContent = TROPHY_EMOJIS[Math.floor(Math.random() * TROPHY_EMOJIS.length)];
+        p.style.setProperty('--tx', Math.cos(rad) * dist + 'px');
+        p.style.setProperty('--ty', Math.sin(rad) * dist + 'px');
+        p.style.setProperty('--delay', (Math.random() * 0.2) + 's');
+        burst.appendChild(p);
+      }
+      setTimeout(() => burst.remove(), 1500);
+    }, b * 300);
+  }
+
+  // banner inferior com delay para não sobrepor os efeitos
+  setTimeout(() => {
+    const banner = document.createElement('div');
+    banner.className = 'reward-trophy-banner';
+    banner.innerHTML = '🏆 Parabéns! Vídeo concluído e troféu conquistado!';
+    document.body.appendChild(banner);
+    banner.addEventListener('animationend', () => banner.remove());
+  }, 600);
 }
 
 function showCompletedWarning() {
@@ -344,6 +485,10 @@ function showCompletedWarning() {
   }, 5000);
 }
 
+export function isPlayerActive() {
+  return !!(player && !videoCompleted);
+}
+
 // Limpar ao sair da página
 export function cleanupPlayer() {
   stopProgressTracking();
@@ -356,6 +501,7 @@ export function cleanupPlayer() {
   videoData = null;
   currentProgress = 0;
   maxProgressReached = 0;
+  maxStarsEarned = 0;
   lastSavedTime = 0;
   videoCompleted = false;
 }
