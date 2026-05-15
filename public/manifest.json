@@ -1,0 +1,27 @@
+{
+  "name": "EducaKids",
+  "short_name": "EducaKids",
+  "description": "Aprenda brincando com vídeos educativos, ganhe estrelas e conquiste prêmios!",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2fd2c8",
+  "orientation": "portrait-primary",
+  "lang": "pt-BR",
+  "categories": ["education", "kids"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
