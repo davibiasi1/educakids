@@ -1,4 +1,19 @@
+import { adminAuth } from '../services/api.js';
+
 export function AdminVideosPage() {
+  if (!adminAuth.isAuthenticated()) {
+    return `
+      <section class="page" style="display:flex;align-items:center;justify-content:center;min-height:60vh;">
+        <div style="text-align:center;">
+          <div style="font-size:3rem;margin-bottom:16px;">🔐</div>
+          <h2>Acesso restrito</h2>
+          <p style="color:var(--muted);margin:8px 0 24px;">Esta área é exclusiva para administradores.</p>
+          <a class="btn btn--primary" href="#/admin-login">Entrar como Admin</a>
+        </div>
+      </section>
+    `;
+  }
+
   return `
     <section class="page admin-page">
       <h2 class="page__title">Admin - <span class="page__titleAccent">Cadastrar Vídeos</span></h2>
@@ -8,15 +23,15 @@ export function AdminVideosPage() {
         <div class="admin-form-card">
           <form id="videoForm" class="video-form">
             <div class="form-group">
-              <label for="youtubeId">ID do YouTube *</label>
-              <input 
-                type="text" 
-                id="youtubeId" 
-                name="youtubeId" 
+              <label for="youtubeId">Link ou ID do YouTube *</label>
+              <input
+                type="text"
+                id="youtubeId"
+                name="youtubeId"
                 required
-                placeholder="Ex: WyA6GscP4DA"
+                placeholder="Cole o link ou ID: https://youtube.com/watch?v=..."
               />
-              <small>O ID está na URL: youtube.com/watch?v=<strong>ID_AQUI</strong></small>
+              <small id="youtubeIdHint">Cole o link completo do YouTube — o ID será extraído automaticamente.</small>
             </div>
 
             <div class="form-group">
@@ -85,10 +100,79 @@ export function AdminVideosPage() {
 }
 
 // Inicializar a página
-export function initAdminVideosPage() {
+export async function initAdminVideosPage() {
+  // Verificar token localmente primeiro (rápido)
+  if (!adminAuth.isAuthenticated()) {
+    window.location.hash = '#/admin-login';
+    return;
+  }
+
+  // Validar token contra o backend (garante que não é inválido/expirado)
+  try {
+    const res = await fetch('http://localhost:3000/admin/me', {
+      headers: { Authorization: `Bearer ${adminAuth.getToken()}` },
+    });
+    if (!res.ok) throw new Error('Token inválido');
+  } catch {
+    adminAuth.logout();
+    window.location.hash = '#/admin-login';
+    return;
+  }
+
   const form = document.getElementById('videoForm');
   const clearBtn = document.getElementById('clearFormBtn');
   const messageEl = document.getElementById('formMessage');
+  const youtubeInput = document.getElementById('youtubeId');
+  const youtubeHint = document.getElementById('youtubeIdHint');
+
+  // Extrai o ID do YouTube de qualquer formato de URL
+  function extractYoutubeId(value) {
+    const trimmed = value.trim();
+    // Formatos suportados:
+    // youtube.com/watch?v=ID
+    // youtu.be/ID
+    // youtube.com/embed/ID
+    // youtube.com/shorts/ID
+    const patterns = [
+      /[?&]v=([a-zA-Z0-9_-]{11})/,
+      /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+      /\/embed\/([a-zA-Z0-9_-]{11})/,
+      /\/shorts\/([a-zA-Z0-9_-]{11})/,
+    ];
+    for (const re of patterns) {
+      const match = trimmed.match(re);
+      if (match) return match[1];
+    }
+    // Se já for apenas o ID (11 caracteres alfanuméricos)
+    if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+    return null;
+  }
+
+  youtubeInput?.addEventListener('input', () => {
+    const val = youtubeInput.value;
+    if (!val.includes('youtube') && !val.includes('youtu.be')) return;
+
+    const id = extractYoutubeId(val);
+    if (id) {
+      youtubeInput.value = id;
+      youtubeInput.style.borderColor = 'var(--mint)';
+      youtubeHint.innerHTML = `✅ ID extraído: <strong>${id}</strong>`;
+      youtubeHint.style.color = 'var(--mint)';
+    } else {
+      youtubeInput.style.borderColor = '#ff7f50';
+      youtubeHint.textContent = '❌ Link inválido. Use: youtube.com/watch?v=ID ou youtu.be/ID';
+      youtubeHint.style.color = '#ff7f50';
+    }
+  });
+
+  youtubeInput?.addEventListener('blur', () => {
+    const id = extractYoutubeId(youtubeInput.value);
+    if (!id) {
+      youtubeInput.style.borderColor = '';
+      youtubeHint.innerHTML = 'Cole o link completo do YouTube — o ID será extraído automaticamente.';
+      youtubeHint.style.color = '';
+    }
+  });
 
   // Carregar vídeos cadastrados
   loadVideosList();
@@ -98,8 +182,10 @@ export function initAdminVideosPage() {
     e.preventDefault();
     
     const formData = new FormData(form);
+    const rawYoutubeId = formData.get('youtubeId');
+    const resolvedId = extractYoutubeId(rawYoutubeId) || rawYoutubeId;
     const videoData = {
-      youtubeId: formData.get('youtubeId'),
+      youtubeId: resolvedId,
       titulo: formData.get('titulo'),
       categoria: formData.get('categoria'),
       idade: formData.get('idade'),
@@ -110,6 +196,7 @@ export function initAdminVideosPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminAuth.getToken()}`,
         },
         body: JSON.stringify(videoData),
       });
@@ -202,6 +289,9 @@ export function initAdminVideosPage() {
     try {
       const response = await fetch(`http://localhost:3000/videos/${videoId}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${adminAuth.getToken()}`,
+        },
       });
 
       if (!response.ok) {

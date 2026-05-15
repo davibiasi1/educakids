@@ -129,6 +129,21 @@ export const api = {
   },
 };
 
+export const adminAuth = {
+  saveToken(token) { localStorage.setItem('adminToken', token); },
+  saveAdmin(admin) { localStorage.setItem('adminUser', JSON.stringify(admin)); },
+  getToken() { return localStorage.getItem('adminToken'); },
+  getAdmin() {
+    const a = localStorage.getItem('adminUser');
+    return a ? JSON.parse(a) : null;
+  },
+  isAuthenticated() { return !!this.getToken(); },
+  logout() {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUser');
+  },
+};
+
 export const auth = {
   saveToken(token) {
     localStorage.setItem('token', token);

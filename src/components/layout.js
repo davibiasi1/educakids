@@ -1,25 +1,30 @@
-import { auth, api } from '../services/api.js';
+import { auth, api, adminAuth } from '../services/api.js';
 
 function getCurrentPath() {
   return window.location.hash.replace('#', '').split('?')[0] || '/home';
 }
 
-function getNavLinks() {
-  const currentPath = getCurrentPath();
+function getNavLinks(isLoggedIn = auth.isAuthenticated()) {
+  const p = getCurrentPath();
+  const active = (path) => p === path ? 'navlink--active' : '';
   return `
-    <a class="navlink ${currentPath === '/home'         ? 'navlink--active' : ''}" href="#/home">Início</a>
-    <a class="navlink ${currentPath === '/videos'       ? 'navlink--active' : ''}" href="#/videos">Vídeos</a>
-    <a class="navlink ${currentPath === '/recompensas'  ? 'navlink--active' : ''}" href="#/recompensas">Recompensas</a>
-    <a class="navlink ${currentPath === '/progresso'    ? 'navlink--active' : ''}" href="#/progresso">Progresso</a>
-    <a class="navlink ${currentPath === '/sobre'        ? 'navlink--active' : ''}" href="#/sobre">Sobre</a>
-    <a class="navlink ${currentPath === '/admin-videos' ? 'navlink--active' : ''}" href="#/admin-videos">Admin</a>
+    <a class="navlink ${active('/home')}" href="#/home">Início</a>
+    ${isLoggedIn ? `
+      <a class="navlink ${active('/videos')}"      href="#/videos">Vídeos</a>
+      <a class="navlink ${active('/recompensas')}" href="#/recompensas">Recompensas</a>
+      <a class="navlink ${active('/progresso')}"   href="#/progresso">Progresso</a>
+    ` : ''}
+    <a class="navlink ${active('/sobre')}" href="#/sobre">Sobre</a>
+    ${adminAuth.isAuthenticated() ? `
+      <a class="navlink ${active('/admin-videos')}" href="#/admin-videos">Admin</a>
+    ` : ''}
   `;
 }
 
 function getMobileNavHTML(isLoggedIn, user) {
   return `
     <nav class="mobile-nav__links">
-      ${getNavLinks()}
+      ${getNavLinks(isLoggedIn)}
     </nav>
     <div class="mobile-nav__footer">
       ${isLoggedIn ? `

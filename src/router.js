@@ -8,6 +8,7 @@ import { updateLayout } from "./components/layout.js";
 import { SobrePage } from "./pages/sobre.js";
 import { PerfilPage, initPerfilPage } from "./pages/perfil.js";
 import { AdminVideosPage, initAdminVideosPage } from "./pages/admin-videos.js";
+import { AdminLoginPage, initAdminLoginPage } from "./pages/admin-login.js";
 import { PlayerPage, initPlayerPage, cleanupPlayer, isPlayerActive } from "./pages/player.js";
 
 const routes = {
@@ -20,6 +21,7 @@ const routes = {
   "/cadastro": CadastroPage,
   "/sobre": SobrePage,
   "/perfil": PerfilPage,
+  "/admin-login": AdminLoginPage,
   "/admin-videos": AdminVideosPage,
   "/player": PlayerPage,
 };
@@ -45,6 +47,10 @@ function render() {
   updateLayout();
   
   // Inicializar página admin se for a rota correta
+  if (path === '/admin-login') {
+    initAdminLoginPage();
+  }
+
   if (path === '/admin-videos') {
     initAdminVideosPage();
   }
