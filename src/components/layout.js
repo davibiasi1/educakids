@@ -1,5 +1,62 @@
 import { auth, api } from '../services/api.js';
 
+function getCurrentPath() {
+  return window.location.hash.replace('#', '').split('?')[0] || '/home';
+}
+
+function getNavLinks() {
+  const currentPath = getCurrentPath();
+  return `
+    <a class="navlink ${currentPath === '/home'         ? 'navlink--active' : ''}" href="#/home">Início</a>
+    <a class="navlink ${currentPath === '/videos'       ? 'navlink--active' : ''}" href="#/videos">Vídeos</a>
+    <a class="navlink ${currentPath === '/recompensas'  ? 'navlink--active' : ''}" href="#/recompensas">Recompensas</a>
+    <a class="navlink ${currentPath === '/progresso'    ? 'navlink--active' : ''}" href="#/progresso">Progresso</a>
+    <a class="navlink ${currentPath === '/sobre'        ? 'navlink--active' : ''}" href="#/sobre">Sobre</a>
+    <a class="navlink ${currentPath === '/admin-videos' ? 'navlink--active' : ''}" href="#/admin-videos">Admin</a>
+  `;
+}
+
+function getMobileNavHTML(isLoggedIn, user) {
+  return `
+    <nav class="mobile-nav__links">
+      ${getNavLinks()}
+    </nav>
+    <div class="mobile-nav__footer">
+      ${isLoggedIn ? `
+        <a class="mobile-nav__link mobile-nav__link--profile" href="#/perfil">☺ Perfil</a>
+        <a class="mobile-nav__link mobile-nav__link--logout" href="#" id="mobile-logout-btn">Sair</a>
+      ` : `
+        <a class="mobile-nav__link" href="#/login">Login</a>
+      `}
+    </div>
+  `;
+}
+
+function getTopbarRight(isLoggedIn, user) {
+  return `
+    ${isLoggedIn && user && user.name ? `<span class="user-name">${user.name}</span>` : ''}
+    ${isLoggedIn ? `
+      <div class="chip chip--gold">
+        <span class="chip__icon">★</span>
+        <span class="chip__value" id="starsValue">0</span>
+      </div>
+      <div class="chip chip--purple">
+        <span class="chip__icon">🏆</span>
+        <span class="chip__value" id="trophyValue">0</span>
+      </div>
+      <a class="avatar" href="#/perfil" aria-label="Perfil" title="${user ? user.name : 'Perfil'}">
+        <span class="avatar__icon">☺</span>
+      </a>
+      <a class="logout-btn" href="#" id="logout-btn">Sair</a>
+    ` : `<a class="logout-btn" href="#/login">Login</a>`}
+    <button class="hamburger" id="hamburger-btn" aria-label="Abrir menu">
+      <span class="hamburger__line"></span>
+      <span class="hamburger__line"></span>
+      <span class="hamburger__line"></span>
+    </button>
+  `;
+}
+
 function setupLogoutButton() {
   setTimeout(() => {
     const logoutBtn = document.getElementById('logout-btn');
@@ -13,36 +70,55 @@ function setupLogoutButton() {
   }, 0);
 }
 
-function getCurrentPath() {
-  return window.location.hash.replace('#', '').split('?')[0] || '/home';
+function setupHamburger() {
+  setTimeout(() => {
+    const btn = document.getElementById('hamburger-btn');
+    const nav = document.getElementById('mobile-nav');
+    if (!btn || !nav) return;
+
+    // Botão é recriado a cada updateLayout → sempre re-vincula
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('open');
+      nav.classList.toggle('open');
+    });
+
+    // Nav persiste no DOM → vincula apenas uma vez via data attribute
+    if (nav.dataset.hamburgerReady) return;
+    nav.dataset.hamburgerReady = 'true';
+
+    nav.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (!link) return;
+      if (link.id === 'mobile-logout-btn') {
+        e.preventDefault();
+        auth.logout();
+        window.location.hash = '#/login';
+      }
+      document.getElementById('hamburger-btn')?.classList.remove('open');
+      nav.classList.remove('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      const hamburgerBtn = document.getElementById('hamburger-btn');
+      if (!hamburgerBtn?.contains(e.target) && !nav.contains(e.target)) {
+        hamburgerBtn?.classList.remove('open');
+        nav.classList.remove('open');
+      }
+    });
+
+    window.addEventListener('hashchange', () => {
+      document.getElementById('hamburger-btn')?.classList.remove('open');
+      nav.classList.remove('open');
+    });
+  }, 0);
 }
 
-function getNavLinks() {
-  const currentPath = getCurrentPath();
-
-  return `
-    <a class="navlink ${currentPath === '/home' ? 'navlink--active' : ''}" href="#/home">Início</a>
-    <a class="navlink ${currentPath === '/videos' ? 'navlink--active' : ''}" href="#/videos">Vídeos</a>
-    <a class="navlink ${currentPath === '/recompensas' ? 'navlink--active' : ''}" href="#/recompensas">Recompensas</a>
-    <a class="navlink ${currentPath === '/progresso' ? 'navlink--active' : ''}" href="#/progresso">Progresso</a>
-    <a class="navlink ${currentPath === '/sobre' ? 'navlink--active' : ''}" href="#/sobre">Sobre</a>
-    <a class="navlink ${currentPath === '/admin-videos' ? 'navlink--active' : ''}" href="#/admin-videos">Admin</a>
-  `;
-}
-
-function getAvatar(user) {
-  const currentPath = getCurrentPath();
-
-  return `
-    <a 
-      class="avatar ${currentPath === '/perfil' ? 'avatar--active' : ''}" 
-      href="#/perfil" 
-      aria-label="Perfil" 
-      title="${user ? user.name : 'Perfil'}"
-    >
-      <span class="avatar__icon">☺</span>
-    </a>
-  `;
+function updateMobileNav() {
+  const nav = document.getElementById('mobile-nav');
+  if (!nav) return;
+  const isLoggedIn = auth.isAuthenticated();
+  const user = auth.getUser();
+  nav.innerHTML = getMobileNavHTML(isLoggedIn, user);
 }
 
 export function renderLayout() {
@@ -50,17 +126,19 @@ export function renderLayout() {
   const user = auth.getUser();
 
   setupLogoutButton();
+  setupHamburger();
 
   return `
     <div class="app">
+      <div class="topbar-wrapper">
       <header class="topbar" id="topbar">
         <div class="topbar__left">
-          <div class="brand">
+          <a class="brand" href="#/home">
             <div class="brand__icon">★</div>
             <div class="brand__name">
               <span class="brand__name--dark">Educa</span><span class="brand__name--color">Kids</span>
             </div>
-          </div>
+          </a>
         </div>
 
         <nav class="topbar__nav">
@@ -68,26 +146,14 @@ export function renderLayout() {
         </nav>
 
         <div class="topbar__right">
-          ${isLoggedIn && user && user.name ? `<span class="user-name">${user.name}</span>` : ''}
-          ${isLoggedIn ? `
-            <div class="chip chip--gold">
-              <span class="chip__icon">★</span>
-              <span class="chip__value" id="starsValue">0</span>
-            </div>
-            <div class="chip chip--purple">
-              <span class="chip__icon">🏆</span>
-              <span class="chip__value" id="trophyValue">0</span>
-            </div>
-          ` : ''}
-          ${isLoggedIn
-            ? `<a class="logout-btn" href="#" id="logout-btn">Sair</a>`
-            : `<a class="logout-btn" href="#/login">Login</a>`
-          }
-          <a class="avatar" href="#/perfil" aria-label="Perfil" title="${user ? user.name : 'Perfil'}">
-            <span class="avatar__icon">☺</span>
-          </a>
+          ${getTopbarRight(isLoggedIn, user)}
         </div>
       </header>
+
+      <div class="mobile-nav" id="mobile-nav">
+        ${getMobileNavHTML(isLoggedIn, user)}
+      </div>
+      </div>
 
       <main class="content" id="view"></main>
     </div>
@@ -101,14 +167,14 @@ export async function updateLayout() {
   const isLoggedIn = auth.isAuthenticated();
   const user = auth.getUser();
 
-  const newTopbar = `
+  topbar.innerHTML = `
     <div class="topbar__left">
-      <div class="brand">
+      <a class="brand" href="#/home">
         <div class="brand__icon">★</div>
         <div class="brand__name">
           <span class="brand__name--dark">Educa</span><span class="brand__name--color">Kids</span>
         </div>
-      </div>
+      </a>
     </div>
 
     <nav class="topbar__nav">
@@ -116,31 +182,14 @@ export async function updateLayout() {
     </nav>
 
     <div class="topbar__right">
-      ${isLoggedIn && user && user.name ? `<span class="user-name">${user.name}</span>` : ''}
-      ${isLoggedIn ? `
-        <div class="chip chip--gold">
-          <span class="chip__icon">★</span>
-          <span class="chip__value" id="starsValue">0</span>
-        </div>
-        <div class="chip chip--purple">
-          <span class="chip__icon">🏆</span>
-          <span class="chip__value" id="trophyValue">0</span>
-        </div>
-      ` : ''}
-      ${isLoggedIn
-        ? `<a class="logout-btn" href="#" id="logout-btn">Sair</a>`
-        : `<a class="logout-btn" href="#/login">Login</a>`
-      }
-      <a class="avatar" href="#/perfil" aria-label="Perfil" title="${user ? user.name : 'Perfil'}">
-        <span class="avatar__icon">☺</span>
-      </a>
+      ${getTopbarRight(isLoggedIn, user)}
     </div>
   `;
 
-  topbar.innerHTML = newTopbar;
   setupLogoutButton();
-  
-  // Atualizar valores reais de estrelas e troféus
+  setupHamburger();
+  updateMobileNav();
+
   if (isLoggedIn) {
     updateUserStats();
   }
@@ -151,25 +200,24 @@ export async function updateUserStats() {
     console.log('🔄 Atualizando estatísticas do usuário...');
     const profile = await api.getProfile();
     console.log('📊 Dados do perfil recebidos:', profile);
-    
+
     const starsElement = document.getElementById('starsValue');
     const trophyElement = document.getElementById('trophyValue');
-    
+
     if (starsElement) {
       starsElement.textContent = profile.stars || 0;
       console.log('⭐ Estrelas atualizadas:', profile.stars || 0);
     } else {
       console.warn('⚠️ Elemento starsValue não encontrado!');
     }
-    
+
     if (trophyElement) {
       trophyElement.textContent = profile.trophies || 0;
       console.log('🏆 Troféus atualizados:', profile.trophies || 0);
     } else {
       console.warn('⚠️ Elemento trophyValue não encontrado!');
     }
-    
-    // Atualizar também o localStorage com dados atualizados
+
     auth.saveUser(profile);
   } catch (error) {
     console.error('❌ Erro ao atualizar estatísticas do usuário:', error);
