@@ -1,4 +1,5 @@
 import { auth } from '../services/api.js';
+import { API_URL } from '../config.js';
 import { updateUserStats } from '../components/layout.js';
 
 let player;
@@ -73,7 +74,7 @@ export async function initPlayerPage(params) {
 
   // Buscar dados do vídeo
   try {
-    const response = await fetch(`http://localhost:3000/videos/${videoId}`);
+    const response = await fetch(`${API_URL}/videos/${videoId}`);
     videoData = await response.json();
     
     document.getElementById('videoTitle').textContent = videoData.titulo;
@@ -88,7 +89,7 @@ export async function initPlayerPage(params) {
     if (auth.isAuthenticated()) {
       try {
         const token = auth.getToken();
-        const progressResponse = await fetch(`http://localhost:3000/videos/progress/${videoId}`, {
+        const progressResponse = await fetch(`${API_URL}/videos/progress/${videoId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -251,7 +252,7 @@ async function saveProgress(progress) {
   try {
     const token = auth.getToken();
     console.log('Salvando progresso:', Math.floor(progress) + '%');
-    const response = await fetch('http://localhost:3000/videos/progress', {
+    const response = await fetch(`${API_URL}/videos/progress`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

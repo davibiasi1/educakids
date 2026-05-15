@@ -1,4 +1,5 @@
 import { adminAuth } from '../services/api.js';
+import { API_URL } from '../config.js';
 
 export function AdminVideosPage() {
   if (!adminAuth.isAuthenticated()) {
@@ -109,7 +110,7 @@ export async function initAdminVideosPage() {
 
   // Validar token contra o backend (garante que não é inválido/expirado)
   try {
-    const res = await fetch('http://localhost:3000/admin/me', {
+    const res = await fetch(`${API_URL}/admin/me`, {
       headers: { Authorization: `Bearer ${adminAuth.getToken()}` },
     });
     if (!res.ok) throw new Error('Token inválido');
@@ -192,7 +193,7 @@ export async function initAdminVideosPage() {
     };
 
     try {
-      const response = await fetch('http://localhost:3000/videos', {
+      const response = await fetch(`${API_URL}/videos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -236,7 +237,7 @@ export async function initAdminVideosPage() {
     const listContent = document.getElementById('videosListContent');
     
     try {
-      const response = await fetch('http://localhost:3000/videos');
+      const response = await fetch(`${API_URL}/videos`);
       const videos = await response.json();
 
       if (videos.length === 0) {
@@ -287,7 +288,7 @@ export async function initAdminVideosPage() {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/videos/${videoId}`, {
+      const response = await fetch(`${API_URL}/videos/${videoId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${adminAuth.getToken()}`,

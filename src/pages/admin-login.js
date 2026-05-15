@@ -1,6 +1,5 @@
 import { adminAuth } from '../services/api.js';
-
-const API_URL = 'http://localhost:3000';
+import { API_URL } from '../config.js';
 
 export function AdminLoginPage() {
   requestAnimationFrame(() => {

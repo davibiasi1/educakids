@@ -1,4 +1,4 @@
-const CACHE = 'educakids-v1';
+const CACHE = 'educakids-v2';
 
 const PRECACHE = [
   '/',

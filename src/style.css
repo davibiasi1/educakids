@@ -2585,6 +2585,18 @@ a.brand:hover .brand__icon {
   min-width: 280px;
 }
 
+@media (max-width: 768px) {
+  #pwa-banner {
+    left: 16px;
+    right: 16px;
+    transform: none;
+    min-width: unset;
+    width: calc(100vw - 32px);
+    box-sizing: border-box;
+    bottom: 12px;
+  }
+}
+
 .pwa-banner__icon {
   font-size: 1.8rem;
   flex-shrink: 0;

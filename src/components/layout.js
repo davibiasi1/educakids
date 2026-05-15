@@ -1,7 +1,7 @@
 import { auth, api, adminAuth } from '../services/api.js';
 
 function getCurrentPath() {
-  return window.location.hash.replace('#', '').split('?')[0] || '/home';
+  return window.location.hash.replace('#', '').split('?')[0] || '/';
 }
 
 function getNavLinks(isLoggedIn = auth.isAuthenticated()) {
@@ -75,47 +75,57 @@ function setupLogoutButton() {
   }, 0);
 }
 
+let _hamburgerGlobalReady = false;
+
+function attachHamburgerBtn() {
+  const btn = document.getElementById('hamburger-btn');
+  const nav = document.getElementById('mobile-nav');
+  if (!btn || !nav || btn.dataset.listenerReady) return;
+  btn.dataset.listenerReady = 'true';
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    btn.classList.toggle('open');
+    nav.classList.toggle('open');
+  });
+}
+
 function setupHamburger() {
-  setTimeout(() => {
-    const btn = document.getElementById('hamburger-btn');
-    const nav = document.getElementById('mobile-nav');
-    if (!btn || !nav) return;
+  // Vincula o botão sincronamente se o DOM já tiver o elemento,
+  // caso contrário adia para o próximo tick (renderLayout ainda não inseriu o HTML)
+  if (document.getElementById('hamburger-btn')) {
+    attachHamburgerBtn();
+  } else {
+    setTimeout(attachHamburgerBtn, 0);
+  }
 
-    // Botão é recriado a cada updateLayout → sempre re-vincula
-    btn.addEventListener('click', () => {
-      btn.classList.toggle('open');
-      nav.classList.toggle('open');
-    });
+  if (_hamburgerGlobalReady) return;
+  _hamburgerGlobalReady = true;
 
-    // Nav persiste no DOM → vincula apenas uma vez via data attribute
-    if (nav.dataset.hamburgerReady) return;
-    nav.dataset.hamburgerReady = 'true';
+  document.addEventListener('click', (e) => {
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const mobileNav   = document.getElementById('mobile-nav');
+    if (!hamburgerBtn?.contains(e.target) && !mobileNav?.contains(e.target)) {
+      hamburgerBtn?.classList.remove('open');
+      mobileNav?.classList.remove('open');
+    }
+  });
 
-    nav.addEventListener('click', (e) => {
-      const link = e.target.closest('a');
-      if (!link) return;
-      if (link.id === 'mobile-logout-btn') {
-        e.preventDefault();
-        auth.logout();
-        window.location.hash = '#/login';
-      }
-      document.getElementById('hamburger-btn')?.classList.remove('open');
-      nav.classList.remove('open');
-    });
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('#mobile-nav a');
+    if (!link) return;
+    if (link.id === 'mobile-logout-btn') {
+      e.preventDefault();
+      auth.logout();
+      window.location.hash = '#/login';
+    }
+    document.getElementById('hamburger-btn')?.classList.remove('open');
+    document.getElementById('mobile-nav')?.classList.remove('open');
+  });
 
-    document.addEventListener('click', (e) => {
-      const hamburgerBtn = document.getElementById('hamburger-btn');
-      if (!hamburgerBtn?.contains(e.target) && !nav.contains(e.target)) {
-        hamburgerBtn?.classList.remove('open');
-        nav.classList.remove('open');
-      }
-    });
-
-    window.addEventListener('hashchange', () => {
-      document.getElementById('hamburger-btn')?.classList.remove('open');
-      nav.classList.remove('open');
-    });
-  }, 0);
+  window.addEventListener('hashchange', () => {
+    document.getElementById('hamburger-btn')?.classList.remove('open');
+    document.getElementById('mobile-nav')?.classList.remove('open');
+  });
 }
 
 function updateMobileNav() {
