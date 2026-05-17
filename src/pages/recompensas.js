@@ -226,12 +226,8 @@ export function RecompensasPage() {
 }
 
 export async function initRecompensasPage() {
-  console.log('🏆 Iniciando página de recompensas...');
-
   try {
-    // Buscar dados do perfil
     const profile = await api.getProfile();
-    console.log('📊 Dados do perfil:', profile);
 
     const userStars = profile.stars || 0;
     const userTrophies = profile.trophies || 0;

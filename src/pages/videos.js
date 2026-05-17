@@ -31,12 +31,10 @@ export async function initVideosPage() {
           acc[p.videoId] = p;
           return acc;
         }, {});
-        console.log('Progresso do usuário carregado:', Object.keys(userProgress).length, 'vídeos');
-        
         // Atualizar estrelas no header
         updateUserStats();
-      } catch (err) {
-        console.log('Usuário sem progresso:', err);
+      } catch {
+        // sem progresso anterior
       }
     }
     

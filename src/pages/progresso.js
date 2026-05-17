@@ -44,23 +44,12 @@ export function ProgressoPage() {
 }
 
 export async function initProgressoPage() {
-  console.log('🤖 Iniciando análise inteligente de progresso...');
-
   try {
-    // Simular delay de processamento para efeito dramático
     await new Promise(resolve => setTimeout(resolve, 1500));
 
-    // Buscar dados do perfil
     const profile = await api.getProfile();
-    console.log('📊 Dados do perfil:', profile);
-
-    // Buscar progresso dos vídeos
     const userProgress = await api.getUserProgress();
-    console.log('📹 Progresso dos vídeos:', userProgress);
-
-    // Buscar todos os vídeos
     const allVideos = await api.getAllVideos();
-    console.log('🎬 Todos os vídeos:', allVideos);
 
     // Atualizar status
     document.getElementById('ai-status').innerHTML = `

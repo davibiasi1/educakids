@@ -102,15 +102,12 @@ export async function initPlayerPage(params) {
           maxStarsEarned = progressData.stars || 0;
           videoCompleted = progressData.completed || false;
           updateProgressUI(currentProgress, progressData.stars || 0, progressData.completed ? 1 : 0);
-          console.log('Progresso carregado:', currentProgress + '%', videoCompleted ? '(Vídeo já completo)' : '');
-          
-          // Se o vídeo já foi completado, mostrar aviso
           if (videoCompleted) {
             showCompletedWarning();
           }
         }
-      } catch (err) {
-        console.log('Usuário sem progresso anterior');
+      } catch {
+        // sem progresso anterior
       }
     }
   } catch (error) {
@@ -149,22 +146,17 @@ function initPlayer(youtubeId) {
 }
 
 function onPlayerReady(event) {
-  console.log('Player pronto! Progresso atual:', currentProgress + '%');
-  
-  // Se houver progresso anterior, posicionar o vídeo
   if (currentProgress > 0 && currentProgress < 100) {
-    // Aguardar um pouco para garantir que a duração está disponível
     setTimeout(() => {
       const duration = player.getDuration();
       if (duration > 0) {
         const startTime = (currentProgress / 100) * duration;
         player.seekTo(startTime, true);
-        lastSavedTime = startTime; // Inicializar posição salva
-        console.log(`Continuando de ${Math.floor(currentProgress)}% (${Math.floor(startTime)}s de ${Math.floor(duration)}s)`);
+        lastSavedTime = startTime;
       }
     }, 500);
   } else {
-    lastSavedTime = 0; // Começando do início
+    lastSavedTime = 0;
   }
 }
 
@@ -187,9 +179,7 @@ function startProgressTracking() {
     const duration = player.getDuration();
     
     if (duration > 0) {
-      // PROTEÇÃO ANTI-TRAPAÇA: Verificar se usuário tentou pular
       if (currentTime > lastSavedTime + 10) {
-        console.warn('⚠️ Tentativa de pulo detectada! Voltando para posição válida.');
         player.seekTo(lastSavedTime, true);
         return;
       }
@@ -251,7 +241,6 @@ async function saveProgress(progress) {
 
   try {
     const token = auth.getToken();
-    console.log('Salvando progresso:', Math.floor(progress) + '%');
     const response = await fetch(`${API_URL}/videos/progress`, {
       method: 'POST',
       headers: {
@@ -266,9 +255,6 @@ async function saveProgress(progress) {
 
     if (response.ok) {
       const data = await response.json();
-      console.log('Progresso salvo! Recompensas:', data.rewards);
-      
-      // Atualizar estatísticas do usuário no header sempre
       updateUserStats();
       
       // Mostrar notificação de recompensas

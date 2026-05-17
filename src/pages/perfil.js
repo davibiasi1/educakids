@@ -60,27 +60,17 @@ export function PerfilPage() {
 }
 
 export async function initPerfilPage() {
-  console.log('🔄 Iniciando página de perfil...');
-
   try {
-    // Buscar dados do perfil
     const profile = await api.getProfile();
-    console.log('📊 Dados do perfil:', profile);
 
-    // Atualizar estatísticas
     const userStars = profile.stars || 0;
     const userTrophies = profile.trophies || 0;
-    
+
     document.getElementById('profile-stars').textContent = userStars;
     document.getElementById('profile-trophies').textContent = userTrophies;
 
-    // Buscar progresso dos vídeos
     const userProgress = await api.getUserProgress();
-    console.log('📹 Progresso dos vídeos:', userProgress);
-
-    // Buscar todos os vídeos para cruzar informações
     const allVideos = await api.getAllVideos();
-    console.log('🎬 Todos os vídeos:', allVideos);
 
     // Criar mapa de progresso por videoId
     const progressMap = {};

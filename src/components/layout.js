@@ -230,26 +230,13 @@ export async function updateLayout() {
 
 export async function updateUserStats() {
   try {
-    console.log('🔄 Atualizando estatísticas do usuário...');
     const profile = await api.getProfile();
-    console.log('📊 Dados do perfil recebidos:', profile);
 
     const starsElement = document.getElementById('starsValue');
     const trophyElement = document.getElementById('trophyValue');
 
-    if (starsElement) {
-      starsElement.textContent = profile.stars || 0;
-      console.log('⭐ Estrelas atualizadas:', profile.stars || 0);
-    } else {
-      console.warn('⚠️ Elemento starsValue não encontrado!');
-    }
-
-    if (trophyElement) {
-      trophyElement.textContent = profile.trophies || 0;
-      console.log('🏆 Troféus atualizados:', profile.trophies || 0);
-    } else {
-      console.warn('⚠️ Elemento trophyValue não encontrado!');
-    }
+    if (starsElement) starsElement.textContent = profile.stars || 0;
+    if (trophyElement) trophyElement.textContent = profile.trophies || 0;
 
     auth.saveUser(profile);
   } catch (error) {
