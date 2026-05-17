@@ -1,4 +1,4 @@
-const CACHE = 'educakids-v2';
+const CACHE = 'educakids-v3';
 
 const PRECACHE = [
   '/',
@@ -46,13 +46,16 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Cache-first para assets estáticos (JS, CSS, imagens)
+  // Cache-first apenas para assets estáticos same-origin (JS, CSS, imagens)
+  // Requisições cross-origin (API do backend) nunca são cacheadas
+  const isSameOrigin = url.origin === self.location.origin;
+
   e.respondWith(
     caches.match(e.request).then((cached) => {
       if (cached) return cached;
 
       return fetch(e.request).then((response) => {
-        if (response.ok && e.request.method === 'GET') {
+        if (response.ok && e.request.method === 'GET' && isSameOrigin) {
           const clone = response.clone();
           caches.open(CACHE).then((c) => c.put(e.request, clone));
         }

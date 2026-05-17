@@ -22,6 +22,7 @@ function getNavLinks(isLoggedIn = auth.isAuthenticated()) {
 }
 
 function getMobileNavHTML(isLoggedIn, user) {
+  const isAdminLoggedIn = adminAuth.isAuthenticated();
   return `
     <nav class="mobile-nav__links">
       ${getNavLinks(isLoggedIn)}
@@ -30,6 +31,8 @@ function getMobileNavHTML(isLoggedIn, user) {
       ${isLoggedIn ? `
         <a class="mobile-nav__link mobile-nav__link--profile" href="#/perfil">☺ Perfil</a>
         <a class="mobile-nav__link mobile-nav__link--logout" href="#" id="mobile-logout-btn">Sair</a>
+      ` : isAdminLoggedIn ? `
+        <a class="mobile-nav__link mobile-nav__link--logout" href="#" id="mobile-admin-logout-btn">Sair (Admin)</a>
       ` : `
         <a class="mobile-nav__link" href="#/login">Login</a>
       `}
@@ -53,7 +56,9 @@ function getTopbarRight(isLoggedIn, user) {
         <span class="avatar__icon">☺</span>
       </a>
       <a class="logout-btn" href="#" id="logout-btn">Sair</a>
-    ` : `<a class="logout-btn" href="#/login">Login</a>`}
+    ` : adminAuth.isAuthenticated()
+      ? `<a class="logout-btn" href="#" id="admin-logout-btn">Sair (Admin)</a>`
+      : `<a class="logout-btn" href="#/login">Login</a>`}
     <button class="hamburger" id="hamburger-btn" aria-label="Abrir menu">
       <span class="hamburger__line"></span>
       <span class="hamburger__line"></span>
@@ -70,6 +75,14 @@ function setupLogoutButton() {
         e.preventDefault();
         auth.logout();
         window.location.hash = '#/login';
+      });
+    }
+    const adminLogoutBtn = document.getElementById('admin-logout-btn');
+    if (adminLogoutBtn) {
+      adminLogoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        adminAuth.logout();
+        window.location.hash = '#/admin-login';
       });
     }
   }, 0);
@@ -117,6 +130,11 @@ function setupHamburger() {
       e.preventDefault();
       auth.logout();
       window.location.hash = '#/login';
+    }
+    if (link.id === 'mobile-admin-logout-btn') {
+      e.preventDefault();
+      adminAuth.logout();
+      window.location.hash = '#/admin-login';
     }
     document.getElementById('hamburger-btn')?.classList.remove('open');
     document.getElementById('mobile-nav')?.classList.remove('open');

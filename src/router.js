@@ -5,6 +5,8 @@ import { ProgressoPage, initProgressoPage } from "./pages/progresso.js";
 import { LoginPage } from "./pages/login.js";
 import { CadastroPage } from "./pages/cadastro.js";
 import { updateLayout } from "./components/layout.js";
+import { auth } from "./services/api.js";
+import { adminAuth } from "./services/api.js";
 import { SobrePage } from "./pages/sobre.js";
 import { PerfilPage, initPerfilPage } from "./pages/perfil.js";
 import { AdminVideosPage, initAdminVideosPage } from "./pages/admin-videos.js";
@@ -33,9 +35,24 @@ function getRoute() {
   return { path, params };
 }
 
+const protectedUserRoutes  = ['/videos', '/trilhas', '/recompensas', '/progresso', '/perfil', '/player'];
+const protectedAdminRoutes = ['/admin-videos'];
+
 function render() {
   const view = document.querySelector("#view");
   const { path, params } = getRoute();
+
+  // Proteção de rotas — usuário
+  if (protectedUserRoutes.includes(path) && !auth.isAuthenticated()) {
+    window.location.hash = '#/login';
+    return;
+  }
+
+  // Proteção de rotas — admin
+  if (protectedAdminRoutes.includes(path) && !adminAuth.isAuthenticated()) {
+    window.location.hash = '#/admin-login';
+    return;
+  }
 
   // Cleanup do player ao sair
   cleanupPlayer();
@@ -57,6 +74,7 @@ function render() {
   
   // Inicializar player se for a rota correta
   if (path === '/player') {
+    playerHash = window.location.hash;
     initPlayerPage(params);
   }
   
@@ -110,25 +128,22 @@ function showExitVideoModal(onConfirm) {
   });
 }
 
-export function initRouter() {
-  let previousHash = window.location.hash || '#/home';
+let playerHash = null; // URL do player armazenada ao entrar na rota
 
+export function initRouter() {
   window.addEventListener("hashchange", () => {
     const targetHash = window.location.hash;
-    const prevPath   = previousHash.replace('#', '').split('?')[0] || '/home';
 
-    if (prevPath === '/player' && isPlayerActive()) {
-      // Restaura a URL sem disparar novo hashchange
-      history.replaceState(null, '', previousHash);
-
+    if (playerHash && isPlayerActive()) {
+      history.replaceState(null, '', playerHash);
       showExitVideoModal(() => {
-        previousHash = targetHash;
+        playerHash = null;
         window.location.hash = targetHash;
       });
       return;
     }
 
-    previousHash = targetHash;
+    playerHash = null;
     render();
   });
 

@@ -206,8 +206,8 @@ function startProgressTracking() {
 
       newProgress = Math.min(newProgress, 100);
 
-      // IMPORTANTE: Nunca retroceder o progresso (exceto ao reassistir vídeo completo)
-      if (newProgress < currentProgress && currentProgress < 100) {
+      // Nunca retroceder a barra de progresso
+      if (newProgress < maxProgressReached) {
         return;
       }
 
